@@ -50,100 +50,105 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: Column(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        children: [
-          Expanded(
-            flex: 40,
-            child: Container(
-              margin: EdgeInsets.all(20),
-              child: Image(
-                image: NetworkImage('https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimg1.wikia.nocookie.net%2F__cb20140805211145%2Fbionicle%2Fimages%2Ff%2Ff6%2FTahu_keyv.jpg&f=1&nofb=1'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 50,
-            child: Container(
-              width: 300,
-              margin: EdgeInsets.only(bottom: 20),
-              color: Colors.grey,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    width:double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      child: Text("i need a palette"),
-                      onPressed: () {
-                        print("pressed");
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width:double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      child: Text("i have a palette"),
-                      onPressed: () {
-                        print("pressed");
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width:double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      child: Text("any palette, please"),
-                      onPressed: () {
-                        print("pressed");
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width:double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      child: Text("my palettes"),
-                      onPressed: () {
-                        print("pressed");
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                      onPressed: ()
-                      {
+       children: [
+         Expanded(
+           flex: 40,
+           child: Image(
+             image: NetworkImage('https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimg1.wikia.nocookie.net%2F__cb20140805211145%2Fbionicle%2Fimages%2Ff%2Ff6%2FTahu_keyv.jpg&f=1&nofb=1'),
+             fit: BoxFit.cover,
+           ),
+         ),
+         Expanded(
+           flex: 50,
+           child: Container(
+             margin: EdgeInsets.only(left: 50, right: 50),
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.stretch,
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 Expanded(
+                   child: Container(
+                     margin: EdgeInsets.only(top: 20, bottom: 20),
+                     child: ElevatedButton(
+                         child: Text('i need a palette',
+                           style: TextStyle(
+                             fontSize: 30,
+                             fontWeight: FontWeight.bold,
+                           ),
+                         ),
+                         onPressed: (){}
+                     )
+                   ),
+                 ),
+                 Expanded(
+                   child: Container(
+                       margin: EdgeInsets.only(top: 20, bottom: 20),
+                       child: ElevatedButton(
+                           child: Text('i have a palette',
+                             style: TextStyle(
+                               fontSize: 30,
+                               fontWeight: FontWeight.bold,
+                             ),
+                           ),
+                           onPressed: (){}
+                       )
+                   ),
+                 ),
+                 Expanded(
+                   child: Container(
+                       margin: EdgeInsets.only(top: 20, bottom: 20),
+                       child: ElevatedButton(
+                           child: Text('any palette, please',
+                             style: TextStyle(
+                               fontSize: 30,
+                               fontWeight: FontWeight.bold,
+                             ),
+                           ),
+                           onPressed: (){}
+                       )
+                   ),
+                 ),
+                 Expanded(
+                   child:Container(
+                       margin: EdgeInsets.only(top: 20, bottom: 20),
+                       child: ElevatedButton(
+                           child: Text('my palettes',
+                             style: TextStyle(
+                               fontSize: 30,
+                               fontWeight: FontWeight.bold,
+                             ),
+                           ),
+                           onPressed: (){}
+                       )
+                   ),
+                 ),
+               ],
+             ),
+           )
+         ),
+         Expanded(
+           flex: 10,
+           child: Row(
+             mainAxisAlignment: MainAxisAlignment.end,
+             crossAxisAlignment: CrossAxisAlignment.center,
+             children: [
+               Container(
+                 margin: EdgeInsets.only(right: 10),
+                 child: IconButton(
+                   icon: const Icon(Icons.settings),
+                   onPressed: (){
 
-                      },
-                      icon: const Icon(Icons.settings)
-                  )
-                ]
-            )
-          )
-        ],
+                   },
+                 ),
+               )
+             ],
+           )
+         )
+       ],
       ),
     );
   }
