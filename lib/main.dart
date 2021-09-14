@@ -132,20 +132,25 @@ class _MyHomePageState extends State<MyHomePage> {
          ),
          Expanded(
            flex: 10,
-           child: Row(
-             mainAxisAlignment: MainAxisAlignment.end,
-             crossAxisAlignment: CrossAxisAlignment.center,
-             children: [
-               Container(
-                 margin: EdgeInsets.only(right: 10),
-                 child: IconButton(
-                   icon: const Icon(Icons.settings),
-                   onPressed: (){
+           child: Container(
+             color: Colors.blue,
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.end,
+               crossAxisAlignment: CrossAxisAlignment.center,
+               children: [
+                 Container(
+                   margin: EdgeInsets.only(right: 15),
+                   child: IconButton(
+                     focusColor: Colors.white,
+                     color: Colors.black,
+                     icon: const Icon(Icons.settings),
+                     onPressed: (){
 
-                   },
-                 ),
-               )
-             ],
+                     },
+                   ),
+                 )
+               ],
+             ),
            )
          )
        ],
