@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/main.dart';
 
 class PaletteType extends StatefulWidget {
   const PaletteType({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _PaletteTypeState extends State<PaletteType> {
         Expanded(
             flex: 10,
             child: Container(
+              color: Colors.blue,
               alignment: Alignment.center,
               child: Text(
                 'choose a palette type',
@@ -40,25 +42,89 @@ class _PaletteTypeState extends State<PaletteType> {
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
                         onPressed: () {},
-                        child: Text('monocolor',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ))),
+                        child: Column(
+                            children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('monochromatic',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                )
+                            ),
+                          ),
+                          Text('a main color with brightness variations'),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(children: [
+                              Icon(Icons.circle, size: 75, color: Color(0xFF380802),),
+                              Icon(Icons.circle, size: 75, color: Color(0xFF911507),),
+                              Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
+                              Icon(Icons.circle, size: 75, color: Color(0xFFFFA096),),
+                            ]),
+                          )
+                        ])
+                    ),
                   ),
                 ),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
-                        onPressed: () {}, child: Text('analogous')),
+                        onPressed: () {},
+                        child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('analogous',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                    )
+                                ),
+                              ),
+                              Text('a main color with hue offshoots'),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Row(children: [
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF0094),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF3B00),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF8C00),),
+                                ]),
+                              )
+                            ])
+                    ),
                   ),
                 ),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
-                        onPressed: () {}, child: Text('complementary')),
+                        onPressed: () {},
+                        child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('complementary',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                    )
+                                ),
+                              ),
+                              Text('two opposing colors, with some variation'),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Row(children: [
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF002E),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFF00FFA5),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFF00FF72),),
+                                ]),
+                              )
+                            ])
+                    ),
                   ),
                 ),
               ],
@@ -73,14 +139,19 @@ class _PaletteTypeState extends State<PaletteType> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {},
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp())
+                      );
+                    },
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {},
-                )
               ],
             ),
           ),
