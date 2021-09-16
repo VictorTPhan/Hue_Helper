@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hue_helper/palette_type.dart';
+import 'package:hue_helper/color_choice.dart';
 
 class PaletteInfo extends StatelessWidget {
   const PaletteInfo({Key? key,
@@ -115,7 +116,7 @@ class PaletteInfo extends StatelessWidget {
                             onPressed: () {
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => PaletteType())
+                                  MaterialPageRoute(builder: (context) => ColorChoice())
                               );
                             },
                           ),
