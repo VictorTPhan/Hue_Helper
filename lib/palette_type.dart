@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hue_helper/main.dart';
+import 'package:hue_helper/monochrome_info.dart';
 
 class PaletteType extends StatefulWidget {
   const PaletteType({Key? key}) : super(key: key);
@@ -41,11 +42,17 @@ class _PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MonochromeInfo())
+                          );
+                        },
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(10),
                             child: Text('monochromatic',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -55,7 +62,7 @@ class _PaletteTypeState extends State<PaletteType> {
                           ),
                           Text('a main color with brightness variations'),
                           Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
                             child: Row(children: [
                               Icon(Icons.circle, size: 75, color: Color(0xFF380802),),
                               Icon(Icons.circle, size: 75, color: Color(0xFF911507),),
@@ -73,9 +80,10 @@ class _PaletteTypeState extends State<PaletteType> {
                     child: ElevatedButton(
                         onPressed: () {},
                         child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(10),
                                 child: Text('analogous',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -85,7 +93,7 @@ class _PaletteTypeState extends State<PaletteType> {
                               ),
                               Text('a main color with hue offshoots'),
                               Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
+                                padding: const EdgeInsets.only(top: 10, bottom: 10),
                                 child: Row(children: [
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF0094),),
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
@@ -103,9 +111,10 @@ class _PaletteTypeState extends State<PaletteType> {
                     child: ElevatedButton(
                         onPressed: () {},
                         child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(10),
                                 child: Text('complementary',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -115,7 +124,7 @@ class _PaletteTypeState extends State<PaletteType> {
                               ),
                               Text('two opposing colors, with some variation'),
                               Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
+                                padding: const EdgeInsets.only(top: 10, bottom: 10),
                                 child: Row(children: [
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF002E),),
