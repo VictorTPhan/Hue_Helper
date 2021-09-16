@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hue_helper/palette_type.dart';
 import 'package:hue_helper/color_choice.dart';
 
 class PaletteInfo extends StatelessWidget {

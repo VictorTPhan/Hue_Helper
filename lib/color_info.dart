@@ -33,17 +33,21 @@ class ColorInfo extends StatelessWidget {
                     child: Container(
                       child: Column(
                         children: [
-                          Text(
-                              colorData.name[0].toUpperCase() + colorData.name.substring(1,colorData.name.length) + ' is a ' + typeText + ' color. ' + colorData.description,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                          fontSize: 25,
-                      )
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                colorData.name[0].toUpperCase() + colorData.name.substring(1,colorData.name.length) + ' is a ' + typeText + ' color. ' + colorData.description,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                              fontSize: 25,
+                              )
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                                 colorData.name + ' is commonly associated with:',
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hue_helper/main.dart';
 import 'package:hue_helper/palette_info.dart';
 
 class PaletteType extends StatefulWidget {
