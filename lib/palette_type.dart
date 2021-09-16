@@ -31,7 +31,7 @@ class _PaletteTypeState extends State<PaletteType> {
               ),
             )),
         Expanded(
-          flex: 80,
+          flex: 90,
           child: Container(
             margin: EdgeInsets.only(left: 50, right: 50),
             child: Column(
@@ -162,31 +162,6 @@ class _PaletteTypeState extends State<PaletteType> {
             ),
           ),
         ),
-        Expanded(
-          flex: 10,
-          child: Container(
-            color: Colors.blue,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyApp())
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
       ],
     )));
   }

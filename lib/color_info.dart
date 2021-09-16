@@ -34,7 +34,7 @@ class ColorInfo extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                              colorData.name + ' is a ' + typeText + ' color. ' + colorData.description,
+                              colorData.name[0].toUpperCase() + colorData.name.substring(1,colorData.name.length) + ' is a ' + typeText + ' color. ' + colorData.description,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                           fontSize: 25,

@@ -92,22 +92,9 @@ class PaletteInfo extends StatelessWidget {
                   child: Container(
                     color: Colors.blue,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            color: Colors.white,
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => PaletteType())
-                              );
-                            },
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: IconButton(
