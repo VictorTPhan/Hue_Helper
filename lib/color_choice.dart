@@ -1,29 +1,63 @@
 import 'package:flutter/material.dart';
-
-class ColorInfo
-{
-  Color color;
-  String name;
-
-  ColorInfo(this.color, this.name);
-}
+import 'package:hue_helper/color_info.dart';
+import 'color_data.dart';
 
 class ColorChoice extends StatelessWidget {
   ColorChoice({Key? key}) : super(key: key);
 
-  final List<ColorInfo> colorList = [];
+  final List<ColorData> colorList = [];
 
   @override
   Widget build(BuildContext context) {
 
-    colorList.add(ColorInfo(Color(0xFFFF0000), 'red'));
-    colorList.add(ColorInfo(Color(0xFFFF5100), 'orange'));
-    colorList.add(ColorInfo(Color(0xFFFFB600), 'yellow'));
-    colorList.add(ColorInfo(Color(0xFFC8FF00), 'lime'));
-    colorList.add(ColorInfo(Color(0xFF5CFF00), 'green'));
-    colorList.add(ColorInfo(Color(0xFF00D9FF), 'teal'));
-    colorList.add(ColorInfo(Color(0xFF0038FF), 'blue'));
-    colorList.add(ColorInfo(Color(0xFFA600FF), 'purple'));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+        colorType.primary,
+        'this is a special color. not really but i had you tricked for a good second or two',
+        ['passion','anger','boldness']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+    colorList.add(
+        ColorData(Color(0xFFFF0000),
+            'red',
+            colorType.primary,
+            '',
+            ['lorem ipsum','lorem ipsum','lorem ipsum']));
 
     return Scaffold(
         body: Center(
@@ -65,8 +99,15 @@ class ColorChoice extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      onPressed: () {
-                                      })),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ColorInfo(colorData: i)),
+                                      );
+                                    }
+                                  )),
                             ),
                         ],
                       ),
