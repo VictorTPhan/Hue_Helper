@@ -47,7 +47,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       }
     }
     else {
-      print('test 3 failed ' + result.toString());
+      print('test 3 failed ' + temp2.toString());
       return temp2;
     }
 
@@ -113,7 +113,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     setState(() {
       //convert ints to percentages
       double lumPercent = luminance/100;
-      double satPercent = luminance/100;
+      double satPercent = saturation/100;
 
       //will represent R, G, B channels, 0 to 255
       int R;
@@ -174,15 +174,17 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       print('now tempB: ' + tempB.toString());
 
       //convert to 8 bit
-      int endR = (tempR*255).round();
-      int endG = (tempG*255).round();
-      int endB = (tempB*255).round();
+      int endR = (tempR*255).round().clamp(0, 255);
+      int endG = (tempG*255).round().clamp(0, 255);
+      int endB = (tempB*255).round().clamp(0, 255);
 
       selectedColor.withRed(endR);
       selectedColor.withGreen(endG);
       selectedColor.withBlue(endB);
 
-      print(endR);
+      print('final R: ' + endR.toString());
+      print('final G: ' + endG.toString());
+      print('final B: ' + endB.toString());
       counter++;
     });
   }
@@ -329,9 +331,8 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                         Container(color: selectedColor, child: Text(
                             counter.toString()
                                 + '    ' +
-                                selectedColor.red.toString() + ', ' +
-                                selectedColor.green.toString() + ', ' +
-                                selectedColor.blue.toString()
+                                _currentSaturationValue.toString() + ', ' +
+                                _currentLuminanceValue.toString()
                         ))
                       ],
                     )
