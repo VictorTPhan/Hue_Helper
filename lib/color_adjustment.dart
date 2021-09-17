@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ColorAdjustment extends StatefulWidget {
@@ -9,7 +11,8 @@ class ColorAdjustment extends StatefulWidget {
 
 class _ColorAdjustmentState extends State<ColorAdjustment> {
 
-  final Color selectedColor = Colors.red;
+  Color selectedColor = Colors.red;
+  int counter = 0;
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
@@ -28,10 +31,60 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
+  int _RBGtoHue(int R,G,B)
+  {
+    //convert RBG values to range 0-1
+    double tempR = R/255;
+    double tempG = G/255;
+    double tempB = B/255;
+
+    //clamp between 0 and 1
+    tempR.clamp(0, 1);
+    tempG.clamp(0, 1);
+    tempB.clamp(0, 1);
+
+    //determine which is the lowest channel
+    double minValue = min(min(tempR, tempG), tempB);
+
+    //determine which is the highest channel
+    //which channel is the highest must be recorded
+    double maxValue = 0;
+    int channel = 0;
+    if (tempR > tempG && tempR > tempB) maxValue = tempR;
+    else if (tempG > tempR && tempG > tempB) {maxValue = tempG; channel = 1; }
+    else if (tempB > tempG && tempB > tempR) {maxValue = tempB; channel = 2; }
+
+    //hue depends on which channel is the largest
+    double hue = 0;
+    if (channel == 0) hue = ((tempG-tempB)/(maxValue-minValue));
+    else if (channel == 1) hue = (2 + (tempB-tempR)/(maxValue-minValue));
+    else if (channel == 2) hue = (4 + (tempR-tempG)/(maxValue-minValue));
+
+    //now convert hue to degrees
+    hue*=60;
+    if (hue < 0) hue+=360;
+
+    /*
+    print('R: ' + tempR.toString());
+    print('G: ' + tempG.toString());
+    print('B: ' + tempB.toString());
+    print('hue: ' + hue.toString());
+    print('minValue: ' + minValue.toString());
+    print('maxValue: ' + maxValue.toString());
+    print((tempG-tempB).toString());
+    print((maxValue-minValue).toString());
+    print('channel: ' + channel.toString());
+    */
+
+    //round to integer
+    return hue.round();
+  }
+
+  //based on mathematics from:
+  //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
   void _HSLtoRGB(int hue, saturation, luminance)
   {
     setState(() {
-
       //will represent R, G, B channels, 0 to 255
       int R;
       int G;
@@ -81,6 +134,9 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       selectedColor.withRed(endR);
       selectedColor.withGreen(endG);
       selectedColor.withBlue(endB);
+
+      print(selectedColor.red);
+      counter++;
     });
   }
 
@@ -113,6 +169,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                 Expanded(
                     flex: 80,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Container(
                           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -123,7 +180,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 25,
                                   )),
-                              Text('how much should the hue differ?',
+                              Text('how much should the other hues differ?',
                                   style: TextStyle(
                                     fontSize: 20,
                                   )),
@@ -138,6 +195,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentHueVarianceValue = value;
+
                                       });
                                     }
                                 ),
@@ -169,6 +227,13 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentSaturationValue = value;
+                                        _HSLtoRGB(
+                                            _RBGtoHue(
+                                                selectedColor.red,
+                                                selectedColor.green,
+                                                selectedColor.blue),
+                                            _currentSaturationValue,
+                                            _currentLuminanceValue);
                                       });
                                     }
                                 ),
@@ -180,7 +245,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
                           child: Column(
                             children: [
-                              Text('Lumiance',
+                              Text('Luminance',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 25,
@@ -200,13 +265,21 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentLuminanceValue = value;
+                                        _HSLtoRGB(
+                                            _RBGtoHue(
+                                                selectedColor.red,
+                                                selectedColor.green,
+                                                selectedColor.blue),
+                                            _currentSaturationValue,
+                                            _currentLuminanceValue);
                                       });
                                     }
                                 ),
                               )
                             ],
                           ),
-                        )
+                        ),
+                        Container(color: selectedColor, child: Text(counter.toString()))
                       ],
                     )
                 ),
