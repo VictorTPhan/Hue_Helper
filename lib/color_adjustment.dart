@@ -1,6 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:hue_helper/finished_palette.dart';
 
 class ColorAdjustment extends StatefulWidget {
   const ColorAdjustment({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     if (6 * tempChannel < 1) {
       result = temp2 + (temp1 - temp2) * 6 * tempChannel;
       if (result < 1) {
-        print('test 1 ' + result.toString());
+        //print('test 1 ' + result.toString());
         return result;
       }
     }
@@ -31,7 +31,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     if (2 * tempChannel < 1) {
       result = temp1;
       if (result < 1) {
-        print('test 2 ' + result.toString());
+        //print('test 2 ' + result.toString());
         return result;
       }
     }
@@ -41,16 +41,16 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       result = temp2 + (temp1 - temp2) * (0.666 - tempChannel) * 6;
 
       if (result < 2) {
-        print('test 3 passed ' + result.toString());
+        //print('test 3 passed ' + result.toString());
         return result;
       }
     }
     else {
-      print('test 3 failed ' + temp2.toString());
+      //print('test 3 failed ' + temp2.toString());
       return temp2;
     }
 
-    print('all tests failed (invalid)');
+    //print('all tests failed (invalid)');
     return result;
   }
 
@@ -128,9 +128,9 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       G = R;
       B = G;
 
-      print('R: ' + R.toString());
-      print('G: ' + G.toString());
-      print('B: ' + B.toString());
+      //print('R: ' + R.toString());
+      //print('G: ' + G.toString());
+      //print('B: ' + B.toString());
 
       //saturation
       double temp1;
@@ -141,11 +141,11 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
         temp1 = (lumPercent + satPercent - lumPercent * satPercent);
       }
 
-      print('temp1: ' + temp1.toString());
+      //print('temp1: ' + temp1.toString());
 
       double temp2 = 2 * lumPercent - temp1;
 
-      print('temp2: ' + temp2.toString());
+      //print('temp2: ' + temp2.toString());
 
       //hue
       double newHue = hue / 360;
@@ -153,7 +153,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       double tempG;
       double tempB;
 
-      print('newHue: ' + newHue.toString());
+      //print('newHue: ' + newHue.toString());
 
       tempR = (newHue + 0.333);
       tempG = newHue;
@@ -163,18 +163,18 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       if (tempG < 0) tempG++; else if (tempG >= 1) tempG--;
       if (tempB < 0) tempB++; else if (tempB >= 1) tempB--;
 
-      print('tempR: ' + tempR.toString());
-      print('tempG: ' + tempG.toString());
-      print('tempB: ' + tempB.toString());
+      //print('tempR: ' + tempR.toString());
+      //print('tempG: ' + tempG.toString());
+      //print('tempB: ' + tempB.toString());
 
       //3 tests must be done per color channel
       tempR = _ensureCorrectColorFormula(temp1, temp2, tempR);
       tempG = _ensureCorrectColorFormula(temp1, temp2, tempG);
       tempB = _ensureCorrectColorFormula(temp1, temp2, tempB);
 
-      print('now tempR: ' + tempR.toString());
-      print('now tempG: ' + tempG.toString());
-      print('now tempB: ' + tempB.toString());
+      //print('now tempR: ' + tempR.toString());
+      //print('now tempG: ' + tempG.toString());
+      //print('now tempB: ' + tempB.toString());
 
       //convert to 8 bit
       int endR = (tempR*255).round().clamp(0, 255);
@@ -185,20 +185,21 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       selectedColor = selectedColor.withGreen(endG);
       selectedColor = selectedColor.withBlue(endB);
 
-      print('final R: ' + endR.toString());
-      print('final G: ' + endG.toString());
-      print('final B: ' + endB.toString());
+      //print('final R: ' + endR.toString());
+      //print('final G: ' + endG.toString());
+      //print('final B: ' + endB.toString());
     });
   }
 
   double _currentHueVarianceValue = 50;
   double _currentSaturationValue = 100;
   double _currentLuminanceValue = 50;
+  int _paletteSize = 4;
 
   @override
   Widget build(BuildContext context) {
 
-    int mainHue = _RGBtoHue(selectedColor.red, selectedColor.green, selectedColor.blue);
+    final int mainHue = _RGBtoHue(selectedColor.red, selectedColor.green, selectedColor.blue);
 
     return Scaffold(
         body: Center(
@@ -243,12 +244,10 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     value: _currentHueVarianceValue,
                                     min: 0,
                                     max: 100,
-                                    divisions: 4,
                                     label: _currentHueVarianceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentHueVarianceValue = value;
-
                                       });
                                     }
                                 ),
@@ -275,7 +274,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     value: _currentSaturationValue,
                                     min: 0,
                                     max: 100,
-                                    divisions: 4,
                                     label: _currentSaturationValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -313,18 +311,21 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     value: _currentLuminanceValue,
                                     min: 0,
                                     max: 100,
-                                    divisions: 4,
                                     label: _currentLuminanceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentLuminanceValue = value;
-                                        _HSLtoRGB(
-                                            _RGBtoHue(
-                                                selectedColor.red,
-                                                selectedColor.green,
-                                                selectedColor.blue),
-                                            _currentSaturationValue,
-                                            _currentLuminanceValue);
+
+                                        //if luminance is zero, the program crashes.
+                                        if (_currentLuminanceValue.round() != 0){
+                                          _HSLtoRGB(
+                                              _RGBtoHue(
+                                                  selectedColor.red,
+                                                  selectedColor.green,
+                                                  selectedColor.blue),
+                                              _currentSaturationValue,
+                                              _currentLuminanceValue);
+                                        }
                                       });
                                     }
                                 ),
@@ -332,10 +333,46 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                             ],
                           ),
                         ),
-                        Container(color: selectedColor, child: Text(
-                                _currentSaturationValue.toString() + ', ' +
-                                _currentLuminanceValue.toString()
-                        ))
+                        Container(
+                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+                          child: Column(
+                            children: [
+                              Text('Palette Size',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25,
+                                  )),
+                              Text('how many colors do you want?',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  )),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Slider(
+                                    value: _paletteSize.toDouble(),
+                                    min: 2,
+                                    max: 6,
+                                    divisions: 4,
+                                    label: _paletteSize.toString(),
+                                    onChanged: (double value) {
+                                      setState(() {
+                                        _paletteSize = value.toInt();
+                                      });
+                                    }
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                              margin: EdgeInsets.all(8.0),
+                              color: selectedColor,
+                              child: Text(
+                                  _currentSaturationValue.toString() + ', ' +
+                                  _currentLuminanceValue.toString()
+                          )),
+                        )
                       ],
                     )
                 ),
@@ -357,7 +394,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          ColorAdjustment())
+                                          FinishedPalette())
                               );
                             },
                           ),
