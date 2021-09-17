@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/color_adjustment.dart';
 import 'color_data.dart';
 
 class ColorInfo extends StatelessWidget {
@@ -89,6 +90,12 @@ class ColorInfo extends StatelessWidget {
                             icon: const Icon(Icons.arrow_forward),
                             color: Colors.white,
                             onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ColorAdjustment())
+                              );
                             },
                           ),
                         ),
