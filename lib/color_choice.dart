@@ -10,54 +10,56 @@ class ColorChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    //all information about colors taken from verywellmind.com
+
     colorList.add(
         ColorData(Color(0xFFFF0000),
             'red',
         colorType.primary,
         'Red has had a long symbolic history throughout nearly all cultures, and is the most common color used in palettes.',
-        ['passion','anger','boldness', 'courageousness']));
+        ['passion','anger','fire', 'courageousness']));
     colorList.add(
         ColorData(Color(0xFFFF6F00),
             'orange',
             colorType.secondary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Orange is one of the boldest warm colors, and is often used in advertising and public safety equipment; for example, traffic cones, safety vests, and hard hats.',
+            ['boldness','drawing attention','energy']));
     colorList.add(
         ColorData(Color(0xFFFFDD00),
             'yellow',
             colorType.primary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Yellow is one of the brightest of the warm colors. Much like orange, it is often used in both advertising and public safety signs. Red and yellow are very common color combinations for advertisements, and yellow is the go-to color for most road signs.',
+            ['brightness', 'happiness', 'vibrancy', 'youth']));
     colorList.add(
         ColorData(Color(0xFFB3FF00),
             'lime',
             colorType.primary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Alongside normal green, lime is the de-facto color for nature. In many respects its associations are similar to that of yellow.',
+            ['nature', 'harmony', 'wealth', 'restlessness']));
     colorList.add(
         ColorData(Color(0xFF08FF00),
             'green',
             colorType.primary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Green is the most common color used in relation to nature. Throughout many years of evolution, humans have best learned to differentiate hues of green.',
+            ['nature', 'tranquility', 'environmental awareness', 'good health']));
     colorList.add(
         ColorData(Color(0xFF00CCFF),
-            'teal',
+            'cyan',
             colorType.primary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Cyan is one of the most commonly used colors for apps and branding. Check the apps on your phone. How many apps implement cyan or a variant of cyan in some fashion?',
+            ['focus', 'concentration', 'calming', 'analytics']));
     colorList.add(
         ColorData(Color(0xFF0040FF),
             'blue',
             colorType.primary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Blue is a color with some of the most varied associations. It is also one of the most commonly selected colors. Blue is one the coldest colors.',
+            ['sadness', 'coldness', 'serenity', 'the ocean', 'productivity']));
     colorList.add(
         ColorData(Color(0xFFA600FF),
             'purple',
             colorType.primary,
-            '',
-            ['lorem ipsum','lorem ipsum','lorem ipsum']));
+            'Historically a rare color due to difficulties in procuring purple dyes, purple has long been used only by kings and queens as part of their royal fashion.',
+            ['wealth', 'royalty', 'mystery']));
 
     return Scaffold(
         body: Center(
