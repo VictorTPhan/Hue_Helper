@@ -12,7 +12,6 @@ class ColorAdjustment extends StatefulWidget {
 class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   Color selectedColor = Colors.red;
-  int counter = 0;
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
@@ -57,8 +56,10 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-  int _RBGtoHue(int R,G,B)
+  int _RGBtoHue(int R,G,B)
   {
+
+
     //convert RBG values to range 0-1
     double tempR = R/255;
     double tempG = G/255;
@@ -89,6 +90,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     //now convert hue to degrees
     hue*=60;
     if (hue < 0) hue+=360;
+    hue = hue.roundToDouble();
 
     /*
     print('R: ' + tempR.toString());
@@ -103,7 +105,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     */
 
     //round to integer
-    return hue.round();
+    return hue.toInt();
   }
 
   //based on mathematics from:
@@ -111,6 +113,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   void _HSLtoRGB(int hue, saturation, luminance)
   {
     setState(() {
+
       //convert ints to percentages
       double lumPercent = luminance/100;
       double satPercent = saturation/100;
@@ -178,23 +181,24 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       int endG = (tempG*255).round().clamp(0, 255);
       int endB = (tempB*255).round().clamp(0, 255);
 
-      selectedColor.withRed(endR);
-      selectedColor.withGreen(endG);
-      selectedColor.withBlue(endB);
+      selectedColor = selectedColor.withRed(endR);
+      selectedColor = selectedColor.withGreen(endG);
+      selectedColor = selectedColor.withBlue(endB);
 
       print('final R: ' + endR.toString());
       print('final G: ' + endG.toString());
       print('final B: ' + endB.toString());
-      counter++;
     });
   }
 
   double _currentHueVarianceValue = 50;
   double _currentSaturationValue = 100;
-  double _currentLuminanceValue = 100;
+  double _currentLuminanceValue = 50;
 
   @override
   Widget build(BuildContext context) {
+
+    int mainHue = _RGBtoHue(selectedColor.red, selectedColor.green, selectedColor.blue);
 
     return Scaffold(
         body: Center(
@@ -277,7 +281,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                       setState(() {
                                         _currentSaturationValue = value;
                                         _HSLtoRGB(
-                                            _RBGtoHue(
+                                            _RGBtoHue(
                                                 selectedColor.red,
                                                 selectedColor.green,
                                                 selectedColor.blue),
@@ -315,7 +319,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                       setState(() {
                                         _currentLuminanceValue = value;
                                         _HSLtoRGB(
-                                            _RBGtoHue(
+                                            _RGBtoHue(
                                                 selectedColor.red,
                                                 selectedColor.green,
                                                 selectedColor.blue),
@@ -329,8 +333,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           ),
                         ),
                         Container(color: selectedColor, child: Text(
-                            counter.toString()
-                                + '    ' +
                                 _currentSaturationValue.toString() + ', ' +
                                 _currentLuminanceValue.toString()
                         ))
