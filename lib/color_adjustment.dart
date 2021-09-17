@@ -18,15 +18,41 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
   double _ensureCorrectColorFormula(double temp1, temp2, tempChannel)
   {
-    if (6 * tempChannel < 1)
-        tempChannel = temp2 + (temp1-temp2) * 6 * tempChannel;
-    else if (2 * tempChannel < 1)
-      tempChannel = temp1;
-    else if (3 * tempChannel < 2)
-      tempChannel = temp2 + (temp1-temp2) * (0.666 - tempChannel) * 6;
-    else tempChannel = temp2;
+    double result = 0;
 
-    return tempChannel;
+    if (6 * tempChannel < 1) {
+      result = temp2 + (temp1 - temp2) * 6 * tempChannel;
+      if (result < 1) {
+        print('test 1 ' + result.toString());
+        return result;
+      }
+    }
+
+    //if first result is bigger than 1, perform second test
+    if (2 * tempChannel < 1) {
+      result = temp1;
+      if (result < 1) {
+        print('test 2 ' + result.toString());
+        return result;
+      }
+    }
+
+    //if second result is bigger than 1, perform third test
+    if (3 * tempChannel < 2) {
+      result = temp2 + (temp1 - temp2) * (0.666 - tempChannel) * 6;
+
+      if (result < 2) {
+        print('test 3 passed ' + result.toString());
+        return result;
+      }
+    }
+    else {
+      print('test 3 failed ' + result.toString());
+      return temp2;
+    }
+
+    print('all tests failed (invalid)');
+    return result;
   }
 
   //based on mathematics from:
@@ -85,27 +111,38 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   void _HSLtoRGB(int hue, saturation, luminance)
   {
     setState(() {
+      //convert ints to percentages
+      double lumPercent = luminance/100;
+      double satPercent = luminance/100;
+
       //will represent R, G, B channels, 0 to 255
       int R;
       int G;
       int B;
 
       //take luminance as a percentage and set all RBG values to 255 * luminance%
-      double lumPercent = luminance/100;
       R = (lumPercent * 255).round();
       G = R;
       B = G;
 
+      print('R: ' + R.toString());
+      print('G: ' + G.toString());
+      print('B: ' + B.toString());
+
       //saturation
       double temp1;
       if (luminance < 50){
-        temp1 = (luminance * (1+saturation)) as double;
+        temp1 = (lumPercent * (1+satPercent));
       }
       else {
-        temp1 = (luminance + saturation - luminance * saturation) as double;
+        temp1 = (lumPercent + satPercent - lumPercent * satPercent);
       }
 
-      double temp2 = 2 * luminance - temp1;
+      print('temp1: ' + temp1.toString());
+
+      double temp2 = 2 * lumPercent - temp1;
+
+      print('temp2: ' + temp2.toString());
 
       //hue
       double newHue = hue / 360;
@@ -113,18 +150,28 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       double tempG;
       double tempB;
 
+      print('newHue: ' + newHue.toString());
+
       tempR = (newHue + 0.333);
       tempG = newHue;
       tempB = newHue - 0.333;
 
-      tempR.clamp(0, 1);
-      tempG.clamp(0, 1);
-      tempB.clamp(0, 1);
+      if (tempR < 0) tempR++; else if (tempR >= 1) tempR--;
+      if (tempG < 0) tempG++; else if (tempG >= 1) tempG--;
+      if (tempB < 0) tempB++; else if (tempB >= 1) tempB--;
+
+      print('tempR: ' + tempR.toString());
+      print('tempG: ' + tempG.toString());
+      print('tempB: ' + tempB.toString());
 
       //3 tests must be done per color channel
       tempR = _ensureCorrectColorFormula(temp1, temp2, tempR);
-      tempR = _ensureCorrectColorFormula(temp1, temp2, tempG);
-      tempR = _ensureCorrectColorFormula(temp1, temp2, tempB);
+      tempG = _ensureCorrectColorFormula(temp1, temp2, tempG);
+      tempB = _ensureCorrectColorFormula(temp1, temp2, tempB);
+
+      print('now tempR: ' + tempR.toString());
+      print('now tempG: ' + tempG.toString());
+      print('now tempB: ' + tempB.toString());
 
       //convert to 8 bit
       int endR = (tempR*255).round();
@@ -135,7 +182,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       selectedColor.withGreen(endG);
       selectedColor.withBlue(endB);
 
-      print(selectedColor.red);
+      print(endR);
       counter++;
     });
   }
@@ -279,7 +326,13 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                             ],
                           ),
                         ),
-                        Container(color: selectedColor, child: Text(counter.toString()))
+                        Container(color: selectedColor, child: Text(
+                            counter.toString()
+                                + '    ' +
+                                selectedColor.red.toString() + ', ' +
+                                selectedColor.green.toString() + ', ' +
+                                selectedColor.blue.toString()
+                        ))
                       ],
                     )
                 ),
