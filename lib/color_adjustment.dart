@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hue_helper/finished_palette.dart';
+import 'package:hue_helper/palette_adjustment.dart';
 import 'color_data.dart';
 
 class ColorAdjustment extends StatefulWidget {
@@ -194,7 +195,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   double _currentHueModifierValue = 0;
   double _currentSaturationValue = 100;
   double _currentLuminanceValue = 50;
-  int _paletteSize = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -361,37 +361,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Text('Palette Size',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                  )),
-                              Text('how many colors do you want?',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    value: _paletteSize.toDouble(),
-                                    min: 2,
-                                    max: 6,
-                                    divisions: 4,
-                                    label: _paletteSize.toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _paletteSize = value.toInt();
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                         Expanded(
                           child: Container(
                               margin: EdgeInsets.all(8.0),
@@ -423,7 +392,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          FinishedPalette())
+                                          PaletteAdjustment())
                               );
                             },
                           ),
