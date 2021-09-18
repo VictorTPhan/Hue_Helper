@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:hue_helper/finished_palette.dart';
 
 class ColorAdjustment extends StatefulWidget {
-  const ColorAdjustment({Key? key}) : super(key: key);
+  const ColorAdjustment({Key? key, required this.givenColor}) : super(key: key);
+
+  final Color givenColor;
 
   @override
   _ColorAdjustmentState createState() => _ColorAdjustmentState();
 }
 
 class _ColorAdjustmentState extends State<ColorAdjustment> {
-
-  Color selectedColor = Colors.red;
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
@@ -58,8 +58,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
   int _RGBtoHue(int R,G,B)
   {
-
-
     //convert RBG values to range 0-1
     double tempR = R/255;
     double tempG = G/255;
@@ -110,85 +108,85 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-  void _HSLtoRGB(int hue, saturation, luminance)
+  List<int> _HSLtoRGB(int hue, saturation, luminance)
   {
-    setState(() {
+    //convert ints to percentages
+    double lumPercent = luminance / 100;
+    double satPercent = saturation / 100;
 
-      //convert ints to percentages
-      double lumPercent = luminance/100;
-      double satPercent = saturation/100;
+    //will represent R, G, B channels, 0 to 255
+    int R;
+    int G;
+    int B;
 
-      //will represent R, G, B channels, 0 to 255
-      int R;
-      int G;
-      int B;
+    //take luminance as a percentage and set all RBG values to 255 * luminance%
+    R = (lumPercent * 255).round();
+    G = R;
+    B = G;
 
-      //take luminance as a percentage and set all RBG values to 255 * luminance%
-      R = (lumPercent * 255).round();
-      G = R;
-      B = G;
+    //print('R: ' + R.toString());
+    //print('G: ' + G.toString());
+    //print('B: ' + B.toString());
 
-      //print('R: ' + R.toString());
-      //print('G: ' + G.toString());
-      //print('B: ' + B.toString());
+    //saturation
+    double temp1;
+    if (luminance < 50) {
+      temp1 = (lumPercent * (1 + satPercent));
+    } else {
+      temp1 = (lumPercent + satPercent - lumPercent * satPercent);
+    }
 
-      //saturation
-      double temp1;
-      if (luminance < 50){
-        temp1 = (lumPercent * (1+satPercent));
-      }
-      else {
-        temp1 = (lumPercent + satPercent - lumPercent * satPercent);
-      }
+    //print('temp1: ' + temp1.toString());
 
-      //print('temp1: ' + temp1.toString());
+    double temp2 = 2 * lumPercent - temp1;
 
-      double temp2 = 2 * lumPercent - temp1;
+    //print('temp2: ' + temp2.toString());
 
-      //print('temp2: ' + temp2.toString());
+    //hue
+    double newHue = hue / 360;
+    double tempR;
+    double tempG;
+    double tempB;
 
-      //hue
-      double newHue = hue / 360;
-      double tempR;
-      double tempG;
-      double tempB;
+    //print('newHue: ' + newHue.toString());
 
-      //print('newHue: ' + newHue.toString());
+    tempR = (newHue + 0.333);
+    tempG = newHue;
+    tempB = newHue - 0.333;
 
-      tempR = (newHue + 0.333);
-      tempG = newHue;
-      tempB = newHue - 0.333;
+    if (tempR < 0)
+      tempR++;
+    else if (tempR >= 1) tempR--;
+    if (tempG < 0)
+      tempG++;
+    else if (tempG >= 1) tempG--;
+    if (tempB < 0)
+      tempB++;
+    else if (tempB >= 1) tempB--;
 
-      if (tempR < 0) tempR++; else if (tempR >= 1) tempR--;
-      if (tempG < 0) tempG++; else if (tempG >= 1) tempG--;
-      if (tempB < 0) tempB++; else if (tempB >= 1) tempB--;
+    //print('tempR: ' + tempR.toString());
+    //print('tempG: ' + tempG.toString());
+    //print('tempB: ' + tempB.toString());
 
-      //print('tempR: ' + tempR.toString());
-      //print('tempG: ' + tempG.toString());
-      //print('tempB: ' + tempB.toString());
+    //3 tests must be done per color channel
+    tempR = _ensureCorrectColorFormula(temp1, temp2, tempR);
+    tempG = _ensureCorrectColorFormula(temp1, temp2, tempG);
+    tempB = _ensureCorrectColorFormula(temp1, temp2, tempB);
 
-      //3 tests must be done per color channel
-      tempR = _ensureCorrectColorFormula(temp1, temp2, tempR);
-      tempG = _ensureCorrectColorFormula(temp1, temp2, tempG);
-      tempB = _ensureCorrectColorFormula(temp1, temp2, tempB);
+    //print('now tempR: ' + tempR.toString());
+    //print('now tempG: ' + tempG.toString());
+    //print('now tempB: ' + tempB.toString());
 
-      //print('now tempR: ' + tempR.toString());
-      //print('now tempG: ' + tempG.toString());
-      //print('now tempB: ' + tempB.toString());
+    //convert to 8 bit
+    int endR = (tempR * 255).round().clamp(0, 255);
+    int endG = (tempG * 255).round().clamp(0, 255);
+    int endB = (tempB * 255).round().clamp(0, 255);
 
-      //convert to 8 bit
-      int endR = (tempR*255).round().clamp(0, 255);
-      int endG = (tempG*255).round().clamp(0, 255);
-      int endB = (tempB*255).round().clamp(0, 255);
+    //print('final R: ' + endR.toString());
+    //print('final G: ' + endG.toString());
+    //print('final B: ' + endB.toString());
 
-      selectedColor = selectedColor.withRed(endR);
-      selectedColor = selectedColor.withGreen(endG);
-      selectedColor = selectedColor.withBlue(endB);
-
-      //print('final R: ' + endR.toString());
-      //print('final G: ' + endG.toString());
-      //print('final B: ' + endB.toString());
-    });
+    return [endR, endG, endB];
   }
 
   double _currentHueVarianceValue = 50;
@@ -199,7 +197,21 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   @override
   Widget build(BuildContext context) {
 
-    final int mainHue = _RGBtoHue(selectedColor.red, selectedColor.green, selectedColor.blue);
+    Color selectedColor = widget.givenColor;
+
+    //records any new color
+    List<int> changedValues;
+
+    //if luminance is zero, the program crashes.
+    if (_currentLuminanceValue.round() != 0){
+      changedValues = _HSLtoRGB(
+          _RGBtoHue(
+              selectedColor.red,
+              selectedColor.green,
+              selectedColor.blue),
+          _currentSaturationValue,
+          _currentLuminanceValue);
+      selectedColor = new Color.fromRGBO(changedValues[0], changedValues[1], changedValues[2], 1);}
 
     return Scaffold(
         body: Center(
@@ -278,13 +290,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentSaturationValue = value;
-                                        _HSLtoRGB(
-                                            _RGBtoHue(
-                                                selectedColor.red,
-                                                selectedColor.green,
-                                                selectedColor.blue),
-                                            _currentSaturationValue,
-                                            _currentLuminanceValue);
                                       });
                                     }
                                 ),
@@ -315,17 +320,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     onChanged: (double value) {
                                       setState(() {
                                         _currentLuminanceValue = value;
-
-                                        //if luminance is zero, the program crashes.
-                                        if (_currentLuminanceValue.round() != 0){
-                                          _HSLtoRGB(
-                                              _RGBtoHue(
-                                                  selectedColor.red,
-                                                  selectedColor.green,
-                                                  selectedColor.blue),
-                                              _currentSaturationValue,
-                                              _currentLuminanceValue);
-                                        }
                                       });
                                     }
                                 ),
