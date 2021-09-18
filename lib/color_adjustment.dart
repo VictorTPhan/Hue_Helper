@@ -241,13 +241,11 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     if (_selectedColorHue < 0) _selectedColorHue+=360;
     else if (_selectedColorHue > 360) _selectedColorHue -= 360;
 
-    //if luminance is zero, the program crashes.
-    if (_currentLuminanceValue.round() != 0){
       changedValues = _HSLtoRGB(
           _selectedColorHue,
           _currentSaturationValue,
           _currentLuminanceValue);
-      selectedColor = new Color.fromRGBO(changedValues[0], changedValues[1], changedValues[2], 1);}
+      selectedColor = new Color.fromRGBO(changedValues[0], changedValues[1], changedValues[2], 1);
 
     return Scaffold(
         body: Center(
