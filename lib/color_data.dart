@@ -9,12 +9,16 @@ class ColorData
   colorType type;
   String description;
   List<String> colorDescriptors;
+  int lowLimit;
+  int highLimit;
 
   ColorData(
       this.color,
       this.name,
       this.type,
       this.description,
-      this.colorDescriptors
+      this.colorDescriptors,
+      this.lowLimit,
+      this.highLimit,
       );
 }

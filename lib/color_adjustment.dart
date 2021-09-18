@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hue_helper/finished_palette.dart';
+import 'color_data.dart';
 
 class ColorAdjustment extends StatefulWidget {
   const ColorAdjustment({Key? key, required this.givenColor}) : super(key: key);
 
-  final Color givenColor;
+  final ColorData givenColor;
 
   @override
   _ColorAdjustmentState createState() => _ColorAdjustmentState();
@@ -189,7 +190,8 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     return [endR, endG, endB];
   }
 
-  double _currentHueVarianceValue = 50;
+  //50% between both hue limiters
+  double _currentHueModifierValue = 0;
   double _currentSaturationValue = 100;
   double _currentLuminanceValue = 50;
   int _paletteSize = 4;
@@ -197,18 +199,37 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   @override
   Widget build(BuildContext context) {
 
-    Color selectedColor = widget.givenColor;
+    int _hueRange = 0;
+    if (widget.givenColor.highLimit < widget.givenColor.lowLimit)
+      {
+        _hueRange = (360-widget.givenColor.lowLimit) + widget.givenColor.highLimit;
+      }
+    else _hueRange = widget.givenColor.highLimit-widget.givenColor.lowLimit;
+
+    //the actual amount of hue to adjust
+    int _hueModifier = ((_currentHueModifierValue/100) * _hueRange).round();
+
+    print('hue range: ' + _hueRange.toString());
+    print('hue modifier: ' + _hueModifier.toString());
+
+    Color selectedColor = widget.givenColor.color;
 
     //records any new color
     List<int> changedValues;
 
+    //the main hue of the color, plus additional hue modifiers.
+    int _selectedColorHue = _RGBtoHue(
+        selectedColor.red,
+        selectedColor.green,
+        selectedColor.blue) + _hueModifier.round();
+
+    if (_selectedColorHue < 0) _selectedColorHue+=360;
+    else if (_selectedColorHue > 360) _selectedColorHue -= 360;
+
     //if luminance is zero, the program crashes.
     if (_currentLuminanceValue.round() != 0){
       changedValues = _HSLtoRGB(
-          _RGBtoHue(
-              selectedColor.red,
-              selectedColor.green,
-              selectedColor.blue),
+          _selectedColorHue,
           _currentSaturationValue,
           _currentLuminanceValue);
       selectedColor = new Color.fromRGBO(changedValues[0], changedValues[1], changedValues[2], 1);}
@@ -241,25 +262,25 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
                           child: Column(
                             children: [
-                              Text('Hue Variance',
+                              Text('Hue',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 25,
                                   )),
-                              Text('how much should the other hues differ?',
+                              Text('how much should the other hue differ?',
                                   style: TextStyle(
                                     fontSize: 20,
                                   )),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Slider(
-                                    value: _currentHueVarianceValue,
-                                    min: 0,
+                                    value: _currentHueModifierValue,
+                                    min: -100,
                                     max: 100,
-                                    label: _currentHueVarianceValue.round().toString(),
+                                    label: _hueModifier.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
-                                        _currentHueVarianceValue = value;
+                                        _currentHueModifierValue = value;
                                       });
                                     }
                                 ),
@@ -363,6 +384,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               margin: EdgeInsets.all(8.0),
                               color: selectedColor,
                               child: Text(
+                                  _selectedColorHue.toString() + ', ' +
                                   _currentSaturationValue.toString() + ', ' +
                                   _currentLuminanceValue.toString()
                           )),

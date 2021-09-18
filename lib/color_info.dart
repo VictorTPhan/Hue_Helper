@@ -94,7 +94,7 @@ class ColorInfo extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        ColorAdjustment(givenColor: colorData.color))
+                                        ColorAdjustment(givenColor: colorData))
                               );
                             },
                           ),
