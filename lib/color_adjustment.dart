@@ -199,30 +199,45 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
   @override
   Widget build(BuildContext context) {
 
-    int _hueRange = 0;
-    if (widget.givenColor.highLimit < widget.givenColor.lowLimit)
-      {
-        _hueRange = (360-widget.givenColor.lowLimit) + widget.givenColor.highLimit;
-      }
-    else _hueRange = widget.givenColor.highLimit-widget.givenColor.lowLimit;
+    //this is the original color that you chose before. in this screen you will be able to adjust its hue.
+    Color selectedColor = widget.givenColor.color;
+
+    //for this to work, the low limit must now be a negative integer,
+    //the main color is 0 on the scale between them,
+    //and the high limit is a positive integer.
+    int _adjustedLowLimit = widget.givenColor.lowLimit;
+    int _adjustedHighLimit = widget.givenColor.highLimit;
+
+    //if the low limit is near 360 (like 337) and the high limit is near 0 (like 14),
+    //we do some extra math in order to convert the low into a negative integer (in that example, -23).
+    if (widget.givenColor.highLimit < widget.givenColor.lowLimit){
+      _adjustedLowLimit=widget.givenColor.lowLimit-360;
+    }
+
+    //now the low limit is under 0 and the high limit is over 0.
+    int _mainColorHue = _RGBtoHue(
+        selectedColor.red,
+        selectedColor.green,
+        selectedColor.blue);
+    _adjustedLowLimit-=_mainColorHue;
+    _adjustedHighLimit-=_mainColorHue;
 
     //the actual amount of hue to adjust
-    int _hueModifier = ((_currentHueModifierValue/100) * _hueRange).round();
-
-    print('hue range: ' + _hueRange.toString());
-    print('hue modifier: ' + _hueModifier.toString());
-
-    Color selectedColor = widget.givenColor.color;
+    int _hueModifier = 0;
+    if (_currentHueModifierValue < 0){
+      _hueModifier = -((_currentHueModifierValue/100) * _adjustedLowLimit).round();
+    }
+    else if (_currentHueModifierValue > 0){
+      _hueModifier = ((_currentHueModifierValue/100) * _adjustedHighLimit).round();
+    }
 
     //records any new color
     List<int> changedValues;
 
     //the main hue of the color, plus additional hue modifiers.
-    int _selectedColorHue = _RGBtoHue(
-        selectedColor.red,
-        selectedColor.green,
-        selectedColor.blue) + _hueModifier.round();
+    int _selectedColorHue = _mainColorHue + _hueModifier.round();
 
+    //the color hue must be between 0 and 360. Any overlap is thus corrected.
     if (_selectedColorHue < 0) _selectedColorHue+=360;
     else if (_selectedColorHue > 360) _selectedColorHue -= 360;
 
