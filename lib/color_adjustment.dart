@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:hue_helper/finished_palette.dart';
 import 'package:hue_helper/palette_adjustment.dart';
 import 'color_data.dart';
 
@@ -58,7 +57,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-  int _RGBtoHue(int R,G,B)
+  int _redGreenBluetoHue(int R,G,B)
   {
     //convert RBG values to range 0-1
     double tempR = R/255;
@@ -110,25 +109,11 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-  List<int> _HSLtoRGB(int hue, saturation, luminance)
+  List<int> _hueSaturationValueToRGB(int hue, saturation, luminance)
   {
     //convert ints to percentages
     double lumPercent = luminance / 100;
     double satPercent = saturation / 100;
-
-    //will represent R, G, B channels, 0 to 255
-    int R;
-    int G;
-    int B;
-
-    //take luminance as a percentage and set all RBG values to 255 * luminance%
-    R = (lumPercent * 255).round();
-    G = R;
-    B = G;
-
-    //print('R: ' + R.toString());
-    //print('G: ' + G.toString());
-    //print('B: ' + B.toString());
 
     //saturation
     double temp1;
@@ -215,7 +200,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     }
 
     //now the low limit is under 0 and the high limit is over 0.
-    int _mainColorHue = _RGBtoHue(
+    int _mainColorHue = _redGreenBluetoHue(
         selectedColor.red,
         selectedColor.green,
         selectedColor.blue);
@@ -241,7 +226,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     if (_selectedColorHue < 0) _selectedColorHue+=360;
     else if (_selectedColorHue > 360) _selectedColorHue -= 360;
 
-      changedValues = _HSLtoRGB(
+      changedValues = _hueSaturationValueToRGB(
           _selectedColorHue,
           _currentSaturationValue,
           _currentLuminanceValue);

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/finished_palette.dart';
+import 'package:hue_helper/palette_input.dart';
+import 'package:hue_helper/settings.dart';
 import 'palette_type.dart';
 
 void main() {
@@ -21,7 +24,6 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -75,6 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context).primaryColor,
+                              ),
                               child: Text(
                                 'i need a palette',
                                 style: TextStyle(
@@ -94,6 +99,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context).primaryColor,
+                              ),
                               child: Text(
                                 'i have a palette',
                                 style: TextStyle(
@@ -101,12 +109,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onPressed: () {})),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    //TODO: create a palette input class
+                                      builder: (context) => PaletteInput()),
+                                );
+                              })),
                     ),
                     Expanded(
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context).primaryColor,
+                              ),
                               child: Text(
                                 'any palette, please',
                                 style: TextStyle(
@@ -114,12 +132,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onPressed: () {})),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    //TODO: Create a random palette descriptor generator and send that data to the finished palette screen
+                                      builder: (context) => FinishedPalette()),
+                                );
+                              })),
                     ),
                     Expanded(
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context).primaryColor,
+                              ),
                               child: Text(
                                 'my palettes',
                                 style: TextStyle(
@@ -135,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
               flex: 10,
               child: Container(
-                color: Colors.blue,
+                color: Theme.of(context).primaryColor,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,7 +174,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         focusColor: Colors.white,
                         color: Colors.black,
                         icon: const Icon(Icons.settings),
-                        onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                //TODO: Create a settings screen
+                                  builder: (context) => Settings()),
+                            );
+                          },
                       ),
                     )
                   ],

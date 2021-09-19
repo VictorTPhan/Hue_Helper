@@ -176,7 +176,8 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                       for (int i = 0; i<_paletteSize; i++)
                         Expanded(
                           child: Container(
-
+                            margin: EdgeInsets.all(4.0),
+                            color: Colors.red,
                           ),
                         )
                     ],
