@@ -128,12 +128,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
+                                //Navigator.push(
+                                  //context,
+                                  //MaterialPageRoute(
                                     //TODO: Create a random palette descriptor generator and send that data to the finished palette screen
-                                      builder: (context) => FinishedPalette()),
-                                );
+                                      //builder: (context) => FinishedPalette()),
+                                //);
                               })),
                     ),
                     Expanded(

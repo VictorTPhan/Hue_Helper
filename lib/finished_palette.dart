@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hue_helper/main.dart';
 
 class FinishedPalette extends StatelessWidget {
-  const FinishedPalette({Key? key}) : super(key: key);
+  const FinishedPalette({Key? key, required this.finalPalette}) : super(key: key);
+
+  final List<Color> finalPalette;
 
   @override
   Widget build(BuildContext context) {
@@ -32,38 +34,15 @@ class FinishedPalette extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFFF0000),
-                                  borderRadius: BorderRadius.all(Radius.circular(30))),
-                              margin: EdgeInsets.all(15),
+                          for (var i in finalPalette)
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: i,
+                                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                                margin: EdgeInsets.all(15),
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFFFA200),
-                                  borderRadius: BorderRadius.all(Radius.circular(30))),
-                              margin: EdgeInsets.all(15),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color(0xFF00FF66),
-                                  borderRadius: BorderRadius.all(Radius.circular(30))),
-                              margin: EdgeInsets.all(15),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color(0xFF0066FF),
-                                  borderRadius: BorderRadius.all(Radius.circular(30))),
-                              margin: EdgeInsets.all(15),
-                            ),
-                          ),
                         ],
                       ),
                     )

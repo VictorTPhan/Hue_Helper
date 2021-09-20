@@ -3,14 +3,19 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hue_helper/palette_info.dart';
 
+enum PaletteOrganization{monochromatic, analogous, complementary}
+
 class PaletteType extends StatefulWidget {
   const PaletteType({Key? key}) : super(key: key);
 
   @override
-  _PaletteTypeState createState() => _PaletteTypeState();
+  PaletteTypeState createState() => PaletteTypeState();
 }
 
-class _PaletteTypeState extends State<PaletteType> {
+class PaletteTypeState extends State<PaletteType> {
+
+  static late PaletteOrganization type;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +52,7 @@ class _PaletteTypeState extends State<PaletteType> {
                           borderRadius: new BorderRadius.circular(40),
                         ),),
                         onPressed: () {
+                          type = PaletteOrganization.monochromatic;
                           Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) =>
@@ -92,6 +98,7 @@ class _PaletteTypeState extends State<PaletteType> {
                           borderRadius: new BorderRadius.circular(40),
                         ),),
                         onPressed: () {
+                          type = PaletteOrganization.analogous;
                           Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) =>
@@ -137,6 +144,7 @@ class _PaletteTypeState extends State<PaletteType> {
                           borderRadius: new BorderRadius.circular(40),
                         ),),
                         onPressed: () {
+                          type = PaletteOrganization.complementary;
                           Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) =>

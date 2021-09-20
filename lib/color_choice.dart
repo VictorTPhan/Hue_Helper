@@ -98,33 +98,39 @@ class ColorChoice extends StatelessWidget {
                 Expanded(
                     flex: 90,
                     child: Container(
+                      padding: const EdgeInsets.all(2.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           for(var i in colorList)
                             Expanded(
-                              child: Container(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      primary: i.color,
-                                    ),
-                                      child: Text(
-                                        i.name,
-                                        style: TextStyle(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.bold,
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Container(
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: i.color,
+                                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
+                                        ),),
+                                        child: Text(
+                                          i.name,
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ColorInfo(colorData: i)),
-                                      );
-                                    }
-                                  )),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ColorInfo(colorData: i)),
+                                        );
+                                      }
+                                    )),
+                              ),
                             ),
                         ],
                       ),

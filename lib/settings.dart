@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'main.dart';
+
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
@@ -36,6 +38,34 @@ class _SettingsState extends State<Settings> {
 
                       ],)
                 ),
+                Expanded(
+                    flex: 10,
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 15),
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                fixedSize: Size.fromHeight(100),
+                                backgroundColor: Theme.of(context).primaryColor,
+                                shape: CircleBorder(),
+                              ),
+                              child: Icon(Icons.arrow_forward, color: Colors.white),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyApp()),
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ))
               ],
             )));
   }

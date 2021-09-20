@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/palette_type.dart';
 
 import 'finished_palette.dart';
 
 class PaletteAdjustment extends StatefulWidget {
-  const PaletteAdjustment({Key? key}) : super(key: key);
+  const PaletteAdjustment({Key? key, required this.adjustedColor}) : super(key: key);
+
+  final Color adjustedColor;
 
   @override
   _PaletteAdjustmentState createState() => _PaletteAdjustmentState();
@@ -15,9 +18,56 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
   double _saturationVarianceValue = 0;
   double _luminanceVarianceValue = 0;
   int _paletteSize = 4;
+  
+  List<Color> palette = List.empty();
+
+  //depending on the palette organization, this will assign them differently
+  //assume palette[0] = adjustedColor
+  void calculateOtherColors()
+  {
+    //TODO: find a better way to get this variable because this is a hacky solution
+    switch(PaletteTypeState.type)
+    {
+      case PaletteOrganization.monochromatic:
+        double mainColorLuminance = widget.adjustedColor.computeLuminance();
+
+        //TODO: calculate a luminance variance for each color channel. this current method adjusts the hue.
+        //divide luminance variance among palette size (excluding first color)
+        double luminanceVarianceBetween =
+            (_luminanceVarianceValue - mainColorLuminance) / (_paletteSize - 1);
+        for (int i = 1; i < _paletteSize; i++) {
+          Color c = widget.adjustedColor;
+          int r = (c.red + (luminanceVarianceBetween * i)).round();
+          int g = (c.green + (luminanceVarianceBetween * i)).round();
+          int b = (c.blue + (luminanceVarianceBetween * i)).round();
+
+          if (r > 255) r = 255;
+          if (g > 255) g = 255;
+          if (b > 255) b = 255;
+
+          palette[i] = Color.fromRGBO(r, g, b, 1);
+        }
+        return;
+      case PaletteOrganization.analogous:
+        return;
+      case PaletteOrganization.complementary:
+        for (int i = (_paletteSize/2).round(); i < _paletteSize; i++)
+          {
+            palette[i] = Colors.red;
+          }
+        return;
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    //create a palette with the amount of colors given
+    palette = List.filled(_paletteSize, widget.adjustedColor);
+
+    //generate a palette
+    calculateOtherColors();
+
     return Scaffold(
         body: Center(
             child: Column(
@@ -123,7 +173,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                                 child: Slider(
                                     value: _luminanceVarianceValue,
                                     min: 0,
-                                    max: 100,
+                                    max: 255,
                                     label: _luminanceVarianceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -171,16 +221,21 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                 ),
                 Expanded(
                   flex: 10,
-                  child: Row(
-                    children: [
-                      for (int i = 0; i<_paletteSize; i++)
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.all(4.0),
-                            color: Colors.red,
-                          ),
-                        )
-                    ],
+                  child: Container(
+                    margin: EdgeInsets.only(left: 3.0, right: 3.0),
+                    child: Row(
+                      children: [
+                        for (var i in palette)
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: i,
+                                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                                margin: EdgeInsets.all(3.0),
+                              ),
+                            )
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
@@ -203,7 +258,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => FinishedPalette()),
+                                    builder: (context) => FinishedPalette(finalPalette: palette,)),
                               );
                             },
                           ),

@@ -377,7 +377,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => PaletteAdjustment()),
+                                    builder: (context) => PaletteAdjustment(adjustedColor: selectedColor)),
                               );
                             },
                           ),
