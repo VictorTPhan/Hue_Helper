@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hue_helper/palette_adjustment.dart';
 import 'color_data.dart';
+import 'main.dart';
 
 class ColorAdjustment extends StatefulWidget {
   const ColorAdjustment({Key? key, required this.givenColor}) : super(key: key);
@@ -187,6 +188,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     //this is the original color that you chose before. in this screen you will be able to adjust its hue.
     Color selectedColor = widget.givenColor.color;
 
+    //TODO: Remove all of thus fluff stuff, replace at least luminance with selectedColor = HSLColor.fromColor(selectedColor).withLightness(_currentLuminanceValue).toColor();
     //for this to work, the low limit must now be a negative integer,
     //the main color is 0 on the scale between them,
     //and the high limit is a positive integer.
@@ -240,7 +242,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Theme.of(context).primaryColor,
+                      color: ThemeColors.primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         'lets adjust the color a bit',
@@ -260,11 +262,16 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
                           child: Column(
                             children: [
-                              Text('Hue',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                  )),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: ThemeColors.secondaryColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                                child: Text('          Hue          ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                    )),
+                              ),
                               Text('how much should the other hue differ?',
                                   style: TextStyle(
                                     fontSize: 20,
@@ -272,6 +279,8 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Slider(
+                                    activeColor: ThemeColors.secondaryColor,
+                                    inactiveColor: ThemeColors.fourthColor,
                                     value: _currentHueModifierValue,
                                     min: -100,
                                     max: 100,
@@ -290,11 +299,16 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
                           child: Column(
                             children: [
-                              Text('Saturation',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                  )),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: ThemeColors.tertiaryColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                                child: Text('   Saturation    ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                    )),
+                              ),
                               Text('how intense is the hue?',
                                   style: TextStyle(
                                     fontSize: 20,
@@ -302,6 +316,8 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Slider(
+                                    activeColor: ThemeColors.secondaryColor,
+                                    inactiveColor: ThemeColors.fourthColor,
                                     value: _currentSaturationValue,
                                     min: 0,
                                     max: 100,
@@ -320,11 +336,16 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
                           child: Column(
                             children: [
-                              Text('Luminance',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                  )),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: ThemeColors.fourthColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                                child: Text('   Luminance   ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                    )),
+                              ),
                               Text('how bright is the color?',
                                   style: TextStyle(
                                     fontSize: 20,
@@ -332,6 +353,8 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Slider(
+                                    activeColor: ThemeColors.secondaryColor,
+                                    inactiveColor: ThemeColors.fourthColor,
                                     value: _currentLuminanceValue,
                                     min: 0,
                                     max: 100,
@@ -369,7 +392,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           child: TextButton(
                             style: TextButton.styleFrom(
                               fixedSize: Size.fromHeight(100),
-                              backgroundColor: Theme.of(context).primaryColor,
+                              backgroundColor: ThemeColors.fourthColor,
                               shape: CircleBorder(),
                             ),
                             child: Icon(Icons.arrow_forward, color: Colors.black),

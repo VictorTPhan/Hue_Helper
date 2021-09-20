@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hue_helper/color_info.dart';
 import 'color_data.dart';
+import 'main.dart';
 
 class ColorChoice extends StatelessWidget {
   ColorChoice({Key? key}) : super(key: key);
@@ -84,7 +85,7 @@ class ColorChoice extends StatelessWidget {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Theme.of(context).primaryColor,
+                      color: ThemeColors.primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         'choose a main color',

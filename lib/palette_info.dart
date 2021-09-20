@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hue_helper/color_choice.dart';
+import 'package:hue_helper/main.dart';
 
 class PaletteInfo extends StatelessWidget {
   const PaletteInfo({Key? key,
@@ -22,7 +23,7 @@ class PaletteInfo extends StatelessWidget {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Theme.of(context).primaryColor,
+                      color: ThemeColors.primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         paletteType,
@@ -55,10 +56,11 @@ class PaletteInfo extends StatelessWidget {
                             ],),
                         ),
                         Container(
-                          color: Colors.blue,
                           child: Container(
+                            decoration: BoxDecoration(
+                                color: ThemeColors.tertiaryColor,
+                                borderRadius: BorderRadius.all(Radius.circular(50))),
                             padding: const EdgeInsets.all(8.0),
-                            color: Theme.of(context).primaryColor,
                             child: Text(paletteType + " palettes can be described as:",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -99,7 +101,7 @@ class PaletteInfo extends StatelessWidget {
                           child: TextButton(
                             style: TextButton.styleFrom(
                               fixedSize: Size.fromHeight(100),
-                              backgroundColor: Theme.of(context).primaryColor,
+                              backgroundColor: ThemeColors.fourthColor,
                               shape: CircleBorder(),
                             ),
                             child: Icon(Icons.arrow_forward, color: Colors.white),

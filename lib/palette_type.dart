@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hue_helper/palette_info.dart';
 
+import 'main.dart';
+
 enum PaletteOrganization{monochromatic, analogous, complementary}
 
 class PaletteType extends StatefulWidget {
@@ -25,7 +27,7 @@ class PaletteTypeState extends State<PaletteType> {
         Expanded(
             flex: 10,
             child: Container(
-              color: Theme.of(context).primaryColor,
+              color: ThemeColors.primaryColor,
               alignment: Alignment.center,
               child: Text(
                 'choose a palette type',
@@ -48,8 +50,9 @@ class PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(40),
+                        style: ElevatedButton.styleFrom(
+                          primary: ThemeColors.secondaryColor,
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                         ),),
                         onPressed: () {
                           type = PaletteOrganization.monochromatic;
@@ -94,9 +97,10 @@ class PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(40),
-                        ),),
+                        style: ElevatedButton.styleFrom(
+                          primary: ThemeColors.tertiaryColor,
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
+                          ),),
                         onPressed: () {
                           type = PaletteOrganization.analogous;
                           Navigator.push(
@@ -140,9 +144,10 @@ class PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(40),
-                        ),),
+                        style: ElevatedButton.styleFrom(
+                          primary: ThemeColors.fourthColor,
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
+                          ),),
                         onPressed: () {
                           type = PaletteOrganization.complementary;
                           Navigator.push(

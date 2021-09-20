@@ -16,7 +16,7 @@ class FinishedPalette extends StatelessWidget {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Theme.of(context).primaryColor,
+                      color: ThemeColors.primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         'voila!',
@@ -59,7 +59,7 @@ class FinishedPalette extends StatelessWidget {
                           child: TextButton(
                             style: TextButton.styleFrom(
                               fixedSize: Size.fromHeight(100),
-                              backgroundColor: Theme.of(context).primaryColor,
+                              backgroundColor: ThemeColors.fourthColor,
                               shape: CircleBorder(),
                             ),
                             child: Icon(Icons.arrow_forward, color: Colors.white),

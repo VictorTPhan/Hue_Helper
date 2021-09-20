@@ -11,6 +11,7 @@ class ColorInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -45,8 +46,10 @@ class ColorInfo extends StatelessWidget {
                             ),
                           ),
                           Container(
+                            decoration: BoxDecoration(
+                                color: colorData.color,
+                                borderRadius: BorderRadius.all(Radius.circular(30))),
                             padding: const EdgeInsets.all(8.0),
-                            color: colorData.color,
                             child: Text(
                                 colorData.name + ' is commonly associated with:',
                                 textAlign: TextAlign.center,

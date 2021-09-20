@@ -1,13 +1,20 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:hue_helper/finished_palette.dart';
 import 'package:hue_helper/palette_input.dart';
 import 'package:hue_helper/settings.dart';
 import 'palette_type.dart';
 
 void main() {
   runApp(MyApp());
+}
+
+class ThemeColors {
+  static const primaryColor = Color(0xFF005CE7);
+  static const secondaryColor = Color(0xFF1A75FF);
+  static const tertiaryColor = Color(0xFF3D8BFF);
+  static const fourthColor = Color(0xFF61A0FF);
+  static const backgroundColor = Color(0xFFD1E3FF); //should be very light
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: 'Be Vietnam Pro',
-        primarySwatch: Colors.green,
+        scaffoldBackgroundColor: ThemeColors.backgroundColor,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -72,8 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(40),
+                              style: ElevatedButton.styleFrom(
+                                primary: ThemeColors.primaryColor,
+                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                               ),),
                               child: Text(
                                 'i need a palette',
@@ -94,8 +102,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(40),
+                              style: ElevatedButton.styleFrom(
+                                primary: ThemeColors.secondaryColor,
+                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                               ),),
                               child: Text(
                                 'i have a palette',
@@ -117,8 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(40),
+                              style: ElevatedButton.styleFrom(
+                                primary: ThemeColors.tertiaryColor,
+                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                               ),),
                               child: Text(
                                 'any palette, please',
@@ -140,8 +150,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                           margin: EdgeInsets.only(top: 20, bottom: 20),
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(40),
+                              style: ElevatedButton.styleFrom(
+                                primary: ThemeColors.fourthColor,
+                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                               ),),
                               child: Text(
                                 'my palettes',
@@ -167,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         style: TextButton.styleFrom(
                           fixedSize: Size.fromHeight(100),
-                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundColor: ThemeColors.fourthColor,
                           shape: CircleBorder(),
                         ),
                         child: Icon(Icons.settings, color: Colors.white),
