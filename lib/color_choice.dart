@@ -84,7 +84,7 @@ class ColorChoice extends StatelessWidget {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Colors.blue,
+                      color: Theme.of(context).primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         'choose a main color',

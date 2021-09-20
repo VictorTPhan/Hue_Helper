@@ -44,8 +44,9 @@ class ColorInfo extends StatelessWidget {
                               )
                             ),
                           ),
-                          Padding(
+                          Container(
                             padding: const EdgeInsets.all(8.0),
+                            color: colorData.color,
                             child: Text(
                                 colorData.name + ' is commonly associated with:',
                                 textAlign: TextAlign.center,
@@ -79,26 +80,28 @@ class ColorInfo extends StatelessWidget {
                 Expanded(
                   flex: 10,
                   child: Container(
-                    color: Colors.blue,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            color: Colors.white,
+                        Container(
+                          margin: EdgeInsets.only(right: 15),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              fixedSize: Size.fromHeight(100),
+                              backgroundColor: colorData.color,
+                              shape: CircleBorder(),
+                            ),
+                            child: Icon(Icons.arrow_forward, color: Colors.black),
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        ColorAdjustment(givenColor: colorData))
+                                    builder: (context) => ColorAdjustment(givenColor: colorData)),
                               );
                             },
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

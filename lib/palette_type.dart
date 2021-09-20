@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hue_helper/palette_info.dart';
 
@@ -18,7 +20,7 @@ class _PaletteTypeState extends State<PaletteType> {
         Expanded(
             flex: 10,
             child: Container(
-              color: Colors.blue,
+              color: Theme.of(context).primaryColor,
               alignment: Alignment.center,
               child: Text(
                 'choose a palette type',
@@ -41,6 +43,9 @@ class _PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(40),
+                        ),),
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -54,18 +59,20 @@ class _PaletteTypeState extends State<PaletteType> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Text('monochromatic',
+                           Text('monochromatic',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 30,
+                                  fontSize: 35,
                                 )
                             ),
-                          ),
-                          Text('a main color with brightness variations'),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
+                            padding: const EdgeInsets.all(10),
+                            child: Text('a main color with brightness variations'),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Color(0x7C000000),
+                                borderRadius: BorderRadius.all(Radius.circular(40))),
                             child: Row(children: [
                               Icon(Icons.circle, size: 75, color: Color(0xFF380802),),
                               Icon(Icons.circle, size: 75, color: Color(0xFF911507),),
@@ -81,6 +88,9 @@ class _PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(40),
+                        ),),
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -94,18 +104,20 @@ class _PaletteTypeState extends State<PaletteType> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text('analogous',
+                               Text('analogous',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 30,
+                                      fontSize: 40,
                                     )
                                 ),
-                              ),
-                              Text('a main color with hue offshoots'),
                               Padding(
-                                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                padding: const EdgeInsets.all(10),
+                                child: Text('a main color with hue offshoots'),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0x7C000000),
+                                    borderRadius: BorderRadius.all(Radius.circular(40))),
                                 child: Row(children: [
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF0094),),
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
@@ -121,6 +133,9 @@ class _PaletteTypeState extends State<PaletteType> {
                   child: Container(
                     margin: EdgeInsets.only(top: 20, bottom: 20),
                     child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(40),
+                        ),),
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -134,18 +149,20 @@ class _PaletteTypeState extends State<PaletteType> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text('complementary',
+                              Text('complementary',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 30,
+                                      fontSize: 35,
                                     )
                                 ),
-                              ),
-                              Text('two opposing colors, with some variation'),
                               Padding(
-                                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                padding: const EdgeInsets.all(10),
+                                child: Text('two opposing colors, with some variation', textAlign: TextAlign.center,),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0x7C000000),
+                                    borderRadius: BorderRadius.all(Radius.circular(40))),
                                 child: Row(children: [
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
                                   Icon(Icons.circle, size: 75, color: Color(0xFFFF002E),),

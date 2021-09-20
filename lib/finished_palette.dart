@@ -14,7 +14,7 @@ class FinishedPalette extends StatelessWidget {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Colors.blue,
+                      color: Theme.of(context).primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         'voila!',
@@ -34,23 +34,35 @@ class FinishedPalette extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Container(
-                                margin: EdgeInsets.all(8.0),
-                                color: Color(0xFFFF0000)),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFFFF0000),
+                                  borderRadius: BorderRadius.all(Radius.circular(30))),
+                              margin: EdgeInsets.all(15),
+                            ),
                           ),
                           Expanded(
                             child: Container(
-                                margin: EdgeInsets.all(8.0),
-                                color: Color(0xFFFF6F00)),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFFFFA200),
+                                  borderRadius: BorderRadius.all(Radius.circular(30))),
+                              margin: EdgeInsets.all(15),
+                            ),
                           ),
                           Expanded(
                             child: Container(
-                                margin: EdgeInsets.all(8.0),
-                                color: Color(0xFFFFDD00)),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF00FF66),
+                                  borderRadius: BorderRadius.all(Radius.circular(30))),
+                              margin: EdgeInsets.all(15),
+                            ),
                           ),
                           Expanded(
                             child: Container(
-                                margin: EdgeInsets.all(8.0),
-                                color: Color(0xFFB3FF00)),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF0066FF),
+                                  borderRadius: BorderRadius.all(Radius.circular(30))),
+                              margin: EdgeInsets.all(15),
+                            ),
                           ),
                         ],
                       ),
@@ -59,26 +71,28 @@ class FinishedPalette extends StatelessWidget {
                 Expanded(
                   flex: 10,
                   child: Container(
-                    color: Colors.blue,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            color: Colors.white,
+                        Container(
+                          margin: EdgeInsets.only(right: 15),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              fixedSize: Size.fromHeight(100),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: CircleBorder(),
+                            ),
+                            child: Icon(Icons.arrow_forward, color: Colors.white),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                      MyHomePage(title: 'Flutter Demo Home Page'))
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyApp()),
                               );
                             },
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

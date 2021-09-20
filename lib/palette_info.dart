@@ -56,8 +56,9 @@ class PaletteInfo extends StatelessWidget {
                         ),
                         Container(
                           color: Colors.blue,
-                          child: Padding(
+                          child: Container(
                             padding: const EdgeInsets.all(8.0),
+                            color: Theme.of(context).primaryColor,
                             child: Text(paletteType + " palettes can be described as:",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -89,24 +90,28 @@ class PaletteInfo extends StatelessWidget {
                 Expanded(
                   flex: 10,
                   child: Container(
-                    color: Colors.blue,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            color: Colors.white,
+                        Container(
+                          margin: EdgeInsets.only(right: 15),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              fixedSize: Size.fromHeight(100),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: CircleBorder(),
+                            ),
+                            child: Icon(Icons.arrow_forward, color: Colors.white),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ColorChoice())
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ColorChoice()),
                               );
                             },
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

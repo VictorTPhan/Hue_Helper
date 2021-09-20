@@ -240,7 +240,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                 Expanded(
                     flex: 10,
                     child: Container(
-                      color: Colors.blue,
+                      color: Theme.of(context).primaryColor,
                       alignment: Alignment.center,
                       child: Text(
                         'lets adjust the color a bit',
@@ -348,13 +348,11 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                         ),
                         Expanded(
                           child: Container(
-                              margin: EdgeInsets.all(8.0),
-                              color: selectedColor,
-                              child: Text(
-                                  _selectedColorHue.toString() + ', ' +
-                                  _currentSaturationValue.toString() + ', ' +
-                                  _currentLuminanceValue.toString()
-                          )),
+                              decoration: BoxDecoration(
+                                  color: selectedColor,
+                                  borderRadius: BorderRadius.all(Radius.circular(30))),
+                              margin: EdgeInsets.all(15),
+                              ),
                         )
                       ],
                     )
@@ -362,26 +360,28 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                 Expanded(
                   flex: 10,
                   child: Container(
-                    color: Colors.blue,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            color: Colors.white,
+                        Container(
+                          margin: EdgeInsets.only(right: 15),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              fixedSize: Size.fromHeight(100),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: CircleBorder(),
+                            ),
+                            child: Icon(Icons.arrow_forward, color: Colors.black),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PaletteAdjustment())
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PaletteAdjustment()),
                               );
                             },
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

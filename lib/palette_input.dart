@@ -32,7 +32,7 @@ class _PaletteInputState extends State<PaletteInput> {
                       ),
                     )),
                 Expanded(
-                    flex: 15,
+                    flex: 20,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
