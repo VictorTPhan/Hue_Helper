@@ -17,47 +17,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-  double _ensureCorrectColorFormula(double temp1, temp2, tempChannel)
-  {
-    double result = 0;
-
-    if (6 * tempChannel < 1) {
-      result = temp2 + (temp1 - temp2) * 6 * tempChannel;
-      if (result < 1) {
-        //print('test 1 ' + result.toString());
-        return result;
-      }
-    }
-
-    //if first result is bigger than 1, perform second test
-    if (2 * tempChannel < 1) {
-      result = temp1;
-      if (result < 1) {
-        //print('test 2 ' + result.toString());
-        return result;
-      }
-    }
-
-    //if second result is bigger than 1, perform third test
-    if (3 * tempChannel < 2) {
-      result = temp2 + (temp1 - temp2) * (0.666 - tempChannel) * 6;
-
-      if (result < 2) {
-        //print('test 3 passed ' + result.toString());
-        return result;
-      }
-    }
-    else {
-      //print('test 3 failed ' + temp2.toString());
-      return temp2;
-    }
-
-    //print('all tests failed (invalid)');
-    return result;
-  }
-
-  //based on mathematics from:
-  //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
   int _redGreenBluetoHue(int R,G,B)
   {
     //convert RBG values to range 0-1
@@ -108,87 +67,18 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     return hue.toInt();
   }
 
-  //based on mathematics from:
-  //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
-  List<int> _hueSaturationValueToRGB(int hue, saturation, luminance)
-  {
-    //convert ints to percentages
-    double lumPercent = luminance / 100;
-    double satPercent = saturation / 100;
-
-    //saturation
-    double temp1;
-    if (luminance < 50) {
-      temp1 = (lumPercent * (1 + satPercent));
-    } else {
-      temp1 = (lumPercent + satPercent - lumPercent * satPercent);
-    }
-
-    //print('temp1: ' + temp1.toString());
-
-    double temp2 = 2 * lumPercent - temp1;
-
-    //print('temp2: ' + temp2.toString());
-
-    //hue
-    double newHue = hue / 360;
-    double tempR;
-    double tempG;
-    double tempB;
-
-    //print('newHue: ' + newHue.toString());
-
-    tempR = (newHue + 0.333);
-    tempG = newHue;
-    tempB = newHue - 0.333;
-
-    if (tempR < 0)
-      tempR++;
-    else if (tempR >= 1) tempR--;
-    if (tempG < 0)
-      tempG++;
-    else if (tempG >= 1) tempG--;
-    if (tempB < 0)
-      tempB++;
-    else if (tempB >= 1) tempB--;
-
-    //print('tempR: ' + tempR.toString());
-    //print('tempG: ' + tempG.toString());
-    //print('tempB: ' + tempB.toString());
-
-    //3 tests must be done per color channel
-    tempR = _ensureCorrectColorFormula(temp1, temp2, tempR);
-    tempG = _ensureCorrectColorFormula(temp1, temp2, tempG);
-    tempB = _ensureCorrectColorFormula(temp1, temp2, tempB);
-
-    //print('now tempR: ' + tempR.toString());
-    //print('now tempG: ' + tempG.toString());
-    //print('now tempB: ' + tempB.toString());
-
-    //convert to 8 bit
-    int endR = (tempR * 255).round().clamp(0, 255);
-    int endG = (tempG * 255).round().clamp(0, 255);
-    int endB = (tempB * 255).round().clamp(0, 255);
-
-    //print('final R: ' + endR.toString());
-    //print('final G: ' + endG.toString());
-    //print('final B: ' + endB.toString());
-
-    return [endR, endG, endB];
-  }
-
   //50% between both hue limiters
   double _currentHueModifierValue = 0;
-  double _currentSaturationValue = 100;
-  double _currentLuminanceValue = 50;
+  double _currentSaturationValue = 1;
+  double _currentLuminanceValue = 0.5;
 
   @override
   Widget build(BuildContext context) {
 
     //this is the original color that you chose before. in this screen you will be able to adjust its hue.
-    Color selectedColor = widget.givenColor.color;
+    HSLColor selectedColor = HSLColor.fromColor(widget.givenColor.color);
 
-    //TODO: Remove all of thus fluff stuff, replace at least luminance with selectedColor = HSLColor.fromColor(selectedColor).withLightness(_currentLuminanceValue).toColor();
+
     //for this to work, the low limit must now be a negative integer,
     //the main color is 0 on the scale between them,
     //and the high limit is a positive integer.
@@ -203,9 +93,10 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
     //now the low limit is under 0 and the high limit is over 0.
     int _mainColorHue = _redGreenBluetoHue(
-        selectedColor.red,
-        selectedColor.green,
-        selectedColor.blue);
+        widget.givenColor.color.red,
+        widget.givenColor.color.green,
+        widget.givenColor.color.blue,
+    );
     _adjustedLowLimit-=_mainColorHue;
     _adjustedHighLimit-=_mainColorHue;
 
@@ -218,9 +109,6 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
       _hueModifier = ((_currentHueModifierValue/100) * _adjustedHighLimit).round();
     }
 
-    //records any new color
-    List<int> changedValues;
-
     //the main hue of the color, plus additional hue modifiers.
     int _selectedColorHue = _mainColorHue + _hueModifier.round();
 
@@ -228,11 +116,9 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
     if (_selectedColorHue < 0) _selectedColorHue+=360;
     else if (_selectedColorHue > 360) _selectedColorHue -= 360;
 
-      changedValues = _hueSaturationValueToRGB(
-          _selectedColorHue,
-          _currentSaturationValue,
-          _currentLuminanceValue);
-      selectedColor = new Color.fromRGBO(changedValues[0], changedValues[1], changedValues[2], 1);
+    selectedColor = selectedColor.withHue(_selectedColorHue.toDouble());
+    selectedColor = selectedColor.withSaturation(_currentSaturationValue);
+    selectedColor = selectedColor.withLightness(_currentLuminanceValue);
 
     return Scaffold(
         body: Center(
@@ -320,7 +206,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     inactiveColor: ThemeColors.fourthColor,
                                     value: _currentSaturationValue,
                                     min: 0,
-                                    max: 100,
+                                    max: 1,
                                     label: _currentSaturationValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -357,7 +243,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                     inactiveColor: ThemeColors.fourthColor,
                                     value: _currentLuminanceValue,
                                     min: 0,
-                                    max: 100,
+                                    max: 1,
                                     label: _currentLuminanceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -372,7 +258,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                         Expanded(
                           child: Container(
                               decoration: BoxDecoration(
-                                  color: selectedColor,
+                                  color: selectedColor.toColor(),
                                   borderRadius: BorderRadius.all(Radius.circular(30))),
                               margin: EdgeInsets.all(15),
                               ),
@@ -400,7 +286,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => PaletteAdjustment(adjustedColor: selectedColor)),
+                                    builder: (context) => PaletteAdjustment(adjustedColor: selectedColor.toColor())),
                               );
                             },
                           ),
