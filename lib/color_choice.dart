@@ -114,13 +114,15 @@ class ColorChoice extends StatelessWidget {
                                           primary: i.color,
                                           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                                         ),),
-                                        child: Text(
-                                          i.name,
-                                          style: TextStyle(
-                                            fontSize: 30,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Color(0x800F0436),
+                                              borderRadius: BorderRadius.all(Radius.circular(30))),
+                                          child: Text('   ' + i.name + '   ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 30,
+                                              )),
                                         ),
                                       onPressed: () {
                                         Navigator.push(

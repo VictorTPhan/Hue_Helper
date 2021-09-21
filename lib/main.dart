@@ -61,10 +61,12 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             flex: 40,
-            child: Image(
-              image: NetworkImage(
-                  'https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fimg1.wikia.nocookie.net%2F__cb20140805211145%2Fbionicle%2Fimages%2Ff%2Ff6%2FTahu_keyv.jpg&f=1&nofb=1'),
-              fit: BoxFit.cover,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image(
+                image: AssetImage('images/logo.png'),
+                  fit: BoxFit.contain,
+              ),
             ),
           ),
           Expanded(

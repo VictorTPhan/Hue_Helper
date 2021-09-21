@@ -158,8 +158,9 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                                       fontSize: 25,
                                     )),
                               ),
-                              Text('how much should the other hue differ?',
+                              Text('how much should the hue differ?',
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               Padding(
@@ -197,6 +198,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               ),
                               Text('how intense is the hue?',
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               Padding(
@@ -234,6 +236,7 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                               ),
                               Text('how bright is the color?',
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               Padding(

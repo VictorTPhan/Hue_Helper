@@ -137,6 +137,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                               Text('how much should the other colors differ in hue?',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               //if analogous palette, expand hue variance
@@ -194,6 +195,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                               Text('how intense should the other hues be?',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               Padding(
@@ -232,6 +234,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                               Text('how bright should the other colors be?',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               Padding(
@@ -269,6 +272,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                               ),
                               Text('how many colors do you want?',
                                   style: TextStyle(
+                                    color: ThemeColors.primaryColor,
                                     fontSize: 20,
                                   )),
                               Padding(

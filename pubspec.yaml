@@ -78,3 +78,5 @@ flutter:
     - family: Be Vietnam Pro
       fonts:
         - asset: fonts/BeVietnamPro-Medium.ttf
+  assets:
+    - images/
