@@ -17,46 +17,70 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
   double _hueVarianceValue = 0;
   double _saturationVarianceValue = 0;
-  double _luminanceVarianceValue = 255; //what is the absolute brightest the palette can be?
+  double _luminanceVarianceValue = 0.5; //what is the absolute brightest the palette can be?
   int _paletteSize = 4;
   
-  List<Color> palette = List.empty();
+  List<HSLColor> palette = List.empty();
 
   //depending on the palette organization, this will assign them differently
   //assume palette[0] = adjustedColor
   void calculateOtherColors()
   {
+    HSLColor referenceColor = HSLColor.fromColor(widget.adjustedColor);
+    double luminanceVariance = _luminanceVarianceValue/_paletteSize;
+    double hueVariance = _hueVarianceValue/_paletteSize;
+    double saturationVariance = _saturationVarianceValue/_paletteSize;
+
     //TODO: find a better way to get this variable because this is a hacky solution
     switch(PaletteTypeState.type)
     {
       case PaletteOrganization.monochromatic:
-        double mainColorLuminance = widget.adjustedColor.computeLuminance();
 
-        //TODO: calculate a luminance variance for each color channel. this current method adjusts the hue.
-        double luminanceVarianceRed = (_luminanceVarianceValue-widget.adjustedColor.red)/(_paletteSize - 1);
-        double luminanceVarianceGreen = (_luminanceVarianceValue-widget.adjustedColor.green)/(_paletteSize - 1);
-        double luminanceVarianceBlue = (_luminanceVarianceValue-widget.adjustedColor.blue)/(_paletteSize - 1);
-
-        for (int i = 1; i < _paletteSize; i++) {
-          Color c = widget.adjustedColor;
-          int r = (c.red + (luminanceVarianceRed * i)).round();
-          int g = (c.green + (luminanceVarianceGreen * i)).round();
-          int b = (c.blue + (luminanceVarianceBlue * i)).round();
-
-          if (r > 255) r = 255;
-          if (g > 255) g = 255;
-          if (b > 255) b = 255;
-
-          palette[i] = Color.fromRGBO(r, g, b, 1);
+        palette[0] = referenceColor.withLightness(1);
+        for (int i = 1; i<_paletteSize-1; i++)
+        {
+          palette[i] = referenceColor.withLightness(luminanceVariance * i);
         }
+        palette[_paletteSize-1] = referenceColor.withLightness(1);
+
         return;
       case PaletteOrganization.analogous:
+        for (int i = 0; i<_paletteSize; i++)
+          {
+            palette[i] = referenceColor.withLightness((0.5 + luminanceVariance * i).clamp(0, 1));
+            palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
+
+            double hueDelta = referenceColor.hue + hueVariance * i;
+            if (hueDelta < 0) hueDelta+=360;
+            if (hueDelta > 360) hueDelta-=360;
+            palette[i] = palette[i].withHue(hueDelta);
+          }
         return;
       case PaletteOrganization.complementary:
-        for (int i = (_paletteSize/2).round(); i < _paletteSize; i++)
+        double saturationVarianceComplementary = _saturationVarianceValue/(_paletteSize/2).round();
+        double oppositeHue = (180-referenceColor.hue).abs();
+
+        for (int i = 0; i< (_paletteSize/2).round(); i++)
           {
-            palette[i] = Colors.red;
+            palette[i] = referenceColor.withLightness((0.5 + luminanceVariance * i).clamp(0, 1));
+
+            double hueDelta = referenceColor.hue + hueVariance * i;
+            if (hueDelta < 0) hueDelta+=360;
+            if (hueDelta > 360) hueDelta-=360;
+            palette[i] = palette[i].withHue(hueDelta);
+
+            palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * i).clamp(0, 1));
           }
+
+        palette[_paletteSize-1] = referenceColor.withHue(oppositeHue);
+
+        for (int i = (_paletteSize/2).round(); i< _paletteSize; i++)
+        {
+          palette[i] = referenceColor.withHue(oppositeHue);
+          palette[i] = palette[i].withLightness((0.5 + luminanceVariance * (i-(_paletteSize/2).round())).clamp(0, 1));
+          palette[i] = palette[i].withHue((oppositeHue - hueVariance * (i-(_paletteSize/2).round())));
+          palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * (i-(_paletteSize/2).round())).clamp(0, 1));
+        }
         return;
       }
   }
@@ -64,8 +88,10 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
   @override
   Widget build(BuildContext context) {
 
+    HSLColor mainPaletteColor = HSLColor.fromColor(widget.adjustedColor);
+
     //create a palette with the amount of colors given
-    palette = List.filled(_paletteSize, widget.adjustedColor);
+    palette = List.filled(_paletteSize, mainPaletteColor);
 
     //generate a palette
     calculateOtherColors();
@@ -113,14 +139,16 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                                   style: TextStyle(
                                     fontSize: 20,
                                   )),
-                              Padding(
+                              //if analogous palette, expand hue variance
+                              if (PaletteTypeState.type == PaletteOrganization.analogous)
+                                Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Slider(
                                     activeColor: ThemeColors.secondaryColor,
                                     inactiveColor: ThemeColors.fourthColor,
                                     value: _hueVarianceValue,
                                     min: 0,
-                                    max: 100,
+                                    max: 180,
                                     label: _hueVarianceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -129,6 +157,23 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                                     }
                                 ),
                               )
+                              else
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Slider(
+                                      activeColor: ThemeColors.secondaryColor,
+                                      inactiveColor: ThemeColors.fourthColor,
+                                      value: _hueVarianceValue,
+                                      min: 0,
+                                      max: 100,
+                                      label: _hueVarianceValue.round().toString(),
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          _hueVarianceValue = value;
+                                        });
+                                      }
+                                  ),
+                                )
                             ],
                           ),
                         ),
@@ -158,7 +203,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                                     inactiveColor: ThemeColors.fourthColor,
                                     value: _saturationVarianceValue,
                                     min: 0,
-                                    max: 100,
+                                    max: 1,
                                     label: _saturationVarianceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -195,8 +240,8 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                                     activeColor: ThemeColors.secondaryColor,
                                     inactiveColor: ThemeColors.fourthColor,
                                     value: _luminanceVarianceValue,
-                                    min: widget.adjustedColor.computeLuminance() * 255,
-                                    max: 255,
+                                    min: 0,
+                                    max: 1,
                                     label: _luminanceVarianceValue.round().toString(),
                                     onChanged: (double value) {
                                       setState(() {
@@ -259,7 +304,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: i,
+                                    color: i.toColor(),
                                     borderRadius: BorderRadius.all(Radius.circular(20))),
                                 margin: EdgeInsets.all(3.0),
                               ),

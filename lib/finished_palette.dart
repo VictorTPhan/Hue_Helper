@@ -4,7 +4,7 @@ import 'package:hue_helper/main.dart';
 class FinishedPalette extends StatelessWidget {
   const FinishedPalette({Key? key, required this.finalPalette}) : super(key: key);
 
-  final List<Color> finalPalette;
+  final List<HSLColor> finalPalette;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class FinishedPalette extends StatelessWidget {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: i,
+                                    color: i.toColor(),
                                     borderRadius: BorderRadius.all(Radius.circular(30))),
                                 margin: EdgeInsets.all(15),
                               ),
