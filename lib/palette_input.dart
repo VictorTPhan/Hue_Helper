@@ -1,7 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:hue_helper/palette_analysis.dart';
+
+import 'main.dart';
 
 class PaletteInput extends StatefulWidget {
   const PaletteInput({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _PaletteInputState extends State<PaletteInput> {
   int currentIndex = 0;
 
   int _paletteSize = 4;
-  List<Color> palette = List.generate(6, (index) => Colors.black87);
+  List<Color> palette = List.generate(6, (index) => ThemeColors.primaryColor);
 
   void selectColor(int index){
     currentIndex = index;
@@ -35,11 +36,6 @@ class _PaletteInputState extends State<PaletteInput> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("Palette length is " + palette.length.toString());
-    print("Palette size is " + _paletteSize.toString());
-    print("Current index is " + currentIndex.toString());
-    //palette = List.filled(_paletteSize, Colors.black87);
 
     return Scaffold(
         body: Center(
@@ -105,13 +101,18 @@ class _PaletteInputState extends State<PaletteInput> {
                       for (int i = 0; i<_paletteSize; i++)
                         Expanded(
                           child: Container(
-                            color: palette[i],
                             margin: EdgeInsets.all(4.0),
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: palette[i],
+                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
+                                  ),),
                                 child: Text("hi!"),
                                 onPressed: (){
-                                  selectColor(i);
-                                  print("changed index to " + i.toString());
+                                  setState(() {
+                                    selectColor(i);
+                                    print("changed index to " + i.toString());
+                                  });
                                 },
                               ),
                           ),
@@ -134,19 +135,29 @@ class _PaletteInputState extends State<PaletteInput> {
                 Expanded(
                   flex: 10,
                   child: Container(
-                    color: Colors.blue,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            color: Colors.white,
-                            onPressed: () {},
+                        Container(
+                          margin: EdgeInsets.only(right: 15),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              fixedSize: Size.fromHeight(100),
+                              backgroundColor: ThemeColors.fourthColor,
+                              shape: CircleBorder(),
+                            ),
+                            child: Icon(Icons.arrow_forward, color: Colors.black),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  //TODO: Create a settings screen
+                                    builder: (context) => PaletteAnalysis(palette: palette.sublist(0, _paletteSize))),
+                              );
+                            },
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),
