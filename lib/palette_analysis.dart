@@ -16,6 +16,7 @@ class PaletteAnalysis extends StatelessWidget {
     //represents the distance between hue in colors
     List<int> hueDeltas = List.filled(palette.length-1, 0);
 
+    //records hueDeltas
     for(int i = 0; i<values.length-1; i++)
     {
       int hueDelta = values[i+1]-values[i];
@@ -24,6 +25,7 @@ class PaletteAnalysis extends StatelessWidget {
 
     int amountOfColors = 1;
 
+    //records the amount of colors
     for(int i = 0; i<hueDeltas.length; i++)
     {
       //hue variance is an arbitrary number and is hardcoded
@@ -34,20 +36,41 @@ class PaletteAnalysis extends StatelessWidget {
     }
 
     List<int> colorIndices = List.filled(amountOfColors, 0, growable: true);
-    colorIndices[0] = 0;
+    //var colorMatrix = new List.generate(amountOfColors, (_) => new List.filled(6, 0, growable: false));
+    var colorMatrix = new List.generate(1, (_) => new List.filled(0, 0, growable: true), growable: true);
 
-    int currentColorIndex = 1;
-    for(int i = 0; i<hueDeltas.length; i++)
+    //determines where the colors start
+    int currentColorIndex = 0;
+
+    //start off by adding first value to [0][0]
+    colorMatrix[0].add(values[0]);
+
+    for(int i = 1; i<values.length; i++)
     {
-      //hue variance is an arbitrary number and is hardcoded
-      if (hueDeltas[i] > 25)
+
+      if (hueDeltas[i-1] > 25)
       {
-        colorIndices[currentColorIndex] = i+1;
+        colorIndices[currentColorIndex] = i;
+        currentColorIndex++;
+        colorMatrix.add(new List.filled(0, 0, growable: true));
+      }
+
+      colorMatrix[currentColorIndex].add(values[i]);
+
+      /*
+      //hue variance is an arbitrary number and is hardcoded
+      //if true, create a new color
+      if (hueDeltas[i-1] > 25)
+      {
+        colorIndices[currentColorIndex] = i;
         currentColorIndex++;
       }
+
+       */
     }
 
     print(colorIndices.toString());
+    print(colorMatrix.toString());
 
     print("amount of colors: " + amountOfColors.toString());
   }
