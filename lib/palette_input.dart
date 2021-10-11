@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class PaletteInput extends StatefulWidget {
   const PaletteInput({Key? key}) : super(key: key);
@@ -9,10 +12,35 @@ class PaletteInput extends StatefulWidget {
 
 class _PaletteInputState extends State<PaletteInput> {
 
+  Color pickerColor = Colors.blue;
+  int currentIndex = 0;
+
   int _paletteSize = 4;
+  List<Color> palette = List.generate(6, (index) => Colors.black87);
+
+  void selectColor(int index){
+    currentIndex = index;
+  }
+
+  void changeSelectedColor(Color color) {
+    pickerColor = color;
+  }
+
+  void changeColor(Color color){
+    setState(() {
+      pickerColor = color;
+      palette[currentIndex] = color;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    print("Palette length is " + palette.length.toString());
+    print("Palette size is " + _paletteSize.toString());
+    print("Current index is " + currentIndex.toString());
+    //palette = List.filled(_paletteSize, Colors.black87);
+
     return Scaffold(
         body: Center(
             child: Column(
@@ -60,6 +88,7 @@ class _PaletteInputState extends State<PaletteInput> {
                                     onChanged: (double value) {
                                       setState(() {
                                         _paletteSize = value.toInt();
+                                        print(_paletteSize);
                                       });
                                     }
                                 ),
@@ -76,8 +105,15 @@ class _PaletteInputState extends State<PaletteInput> {
                       for (int i = 0; i<_paletteSize; i++)
                         Expanded(
                           child: Container(
+                            color: palette[i],
                             margin: EdgeInsets.all(4.0),
-                            color: Colors.red,
+                              child: ElevatedButton(
+                                child: Text("hi!"),
+                                onPressed: (){
+                                  selectColor(i);
+                                  print("changed index to " + i.toString());
+                                },
+                              ),
                           ),
                         )
                     ],
@@ -85,10 +121,14 @@ class _PaletteInputState extends State<PaletteInput> {
                 ),
                 Expanded(
                   flex: 50,
-                  child: Row(
-                    children: [
-
-                    ],
+                  child: ColorPicker(
+                    pickerColor: palette[currentIndex],
+                    onColorChanged: changeColor,
+                    showLabel: true,
+                    enableAlpha: false,
+                    portraitOnly: true,
+                    displayThumbColor: true,
+                    pickerAreaHeightPercent: 0.8,
                   ),
                 ),
                 Expanded(

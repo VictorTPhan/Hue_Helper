@@ -15,7 +15,7 @@ class PaletteAdjustment extends StatefulWidget {
 
 class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
-  double _hueVarianceValue = 0;
+  double _hueVarianceValue = 100;
   double _saturationVarianceValue = 0;
   double _luminanceVarianceValue = 0.5; //what is the absolute brightest the palette can be?
   int _paletteSize = 4;
@@ -35,19 +35,29 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
     switch(PaletteTypeState.type)
     {
       case PaletteOrganization.monochromatic:
-
-        palette[0] = referenceColor.withLightness(1);
-        for (int i = 1; i<_paletteSize-1; i++)
+        for (int i = 0; i<(_paletteSize/2).round(); i++)
         {
-          palette[i] = referenceColor.withLightness(luminanceVariance * i);
+          double lumDelta = referenceColor.lightness + (luminanceVariance*2) * i;
+          if (lumDelta < 0) lumDelta=0;
+          if (lumDelta > 1) lumDelta=1;
+          palette[i] = referenceColor.withLightness(lumDelta);
         }
-        palette[_paletteSize-1] = referenceColor.withLightness(1);
-
+        for (int i = (_paletteSize/2).round(); i<_paletteSize; i++)
+        {
+          //the +1 at the end is so that the dark colors don't start at the main color luminance
+          double lumDelta = referenceColor.lightness - (luminanceVariance) * (i-(_paletteSize/2).round()+1);
+          if (lumDelta < 0) lumDelta=0;
+          if (lumDelta > 1) lumDelta=1;
+          palette[i] = referenceColor.withLightness(lumDelta);
+        }
         return;
       case PaletteOrganization.analogous:
         for (int i = 0; i<_paletteSize; i++)
           {
-            palette[i] = referenceColor.withLightness((0.5 + luminanceVariance * i).clamp(0, 1));
+            double lumDelta = (0.5 + luminanceVariance * i);
+            if (lumDelta < 0) lumDelta=0;
+            if (lumDelta > 1) lumDelta=1;
+            palette[i] = referenceColor.withLightness(lumDelta);
             palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
 
             double hueDelta = referenceColor.hue + hueVariance * i;
@@ -76,9 +86,13 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
         for (int i = (_paletteSize/2).round(); i< _paletteSize; i++)
         {
-          palette[i] = referenceColor.withHue(oppositeHue);
           palette[i] = palette[i].withLightness((0.5 + luminanceVariance * (i-(_paletteSize/2).round())).clamp(0, 1));
-          palette[i] = palette[i].withHue((oppositeHue - hueVariance * (i-(_paletteSize/2).round())));
+
+          double hueDelta = (oppositeHue - hueVariance * (i-(_paletteSize/2).round()));
+          if (hueDelta < 0) hueDelta+=360;
+          if (hueDelta > 360) hueDelta-=360;
+          palette[i] = palette[i].withHue(hueDelta);
+
           palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * (i-(_paletteSize/2).round())).clamp(0, 1));
         }
         return;
@@ -148,7 +162,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                                     activeColor: ThemeColors.secondaryColor,
                                     inactiveColor: ThemeColors.fourthColor,
                                     value: _hueVarianceValue,
-                                    min: 0,
+                                    min: 90,
                                     max: 180,
                                     label: _hueVarianceValue.round().toString(),
                                     onChanged: (double value) {

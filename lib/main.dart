@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Hue Helper',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Be Vietnam Pro',
         scaffoldBackgroundColor: ThemeColors.backgroundColor,

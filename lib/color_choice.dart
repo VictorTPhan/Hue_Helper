@@ -72,9 +72,9 @@ class ColorChoice extends StatelessWidget {
     colorList.add(
         ColorData(Color(0xFFFF01B1),
             'magenta',
-            colorType.primary,
-            'Historically a rare color due to difficulties in procuring purple dyes, purple has long been used only by kings and queens as part of their royal fashion.',
-            ['wealth', 'royalty', 'mystery'],
+            colorType.secondary,
+            'Mangeta is a semi-common color in nature. When toned down, it is a very relaxing color. On the same token, when highly saturated, magenta can be both striking and extremely bold.',
+            ['energy', 'vibrancy', 'youth', 'obnoxious'],
             293, 336));
 
     return Scaffold(
