@@ -17,7 +17,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
   double _hueVarianceValue = 100;
   double _saturationVarianceValue = 0;
-  double _luminanceVarianceValue = 0.5; //what is the absolute brightest the palette can be?
+  double _luminanceVarianceValue = 0; //what is the absolute brightest the palette can be?
   int _paletteSize = 4;
   
   List<HSLColor> palette = List.empty();
@@ -31,24 +31,26 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
     double hueVariance = _hueVarianceValue/_paletteSize;
     double saturationVariance = _saturationVarianceValue/_paletteSize;
 
-    //TODO: find a better way to get this variable because this is a hacky solution
+    int halfWay = (_paletteSize/2).round();
+
     switch(PaletteTypeState.type)
     {
       case PaletteOrganization.monochromatic:
-        for (int i = 0; i<(_paletteSize/2).round(); i++)
+
+        //at luminanceVariance = 0, the colors should all be the base color
+        //at luminanceVariance = 1, the colors should range from pitch black to pure white
+
+        double negRange = referenceColor.lightness * (_luminanceVarianceValue/1.0);
+
+        for (int i = 1; i <= halfWay; i++)
         {
-          double lumDelta = referenceColor.lightness + (luminanceVariance*2) * i;
-          if (lumDelta < 0) lumDelta=0;
-          if (lumDelta > 1) lumDelta=1;
-          palette[i] = referenceColor.withLightness(lumDelta);
+            palette[i-1] = referenceColor.withLightness(referenceColor.lightness - negRange * ((halfWay-i+1)/halfWay));
         }
-        for (int i = (_paletteSize/2).round(); i<_paletteSize; i++)
+
+        double posRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
+        for (int i = halfWay+2; i <= _paletteSize; i++)
         {
-          //the +1 at the end is so that the dark colors don't start at the main color luminance
-          double lumDelta = referenceColor.lightness - (luminanceVariance) * (i-(_paletteSize/2).round()+1);
-          if (lumDelta < 0) lumDelta=0;
-          if (lumDelta > 1) lumDelta=1;
-          palette[i] = referenceColor.withLightness(lumDelta);
+          palette[i-1] = referenceColor.withLightness(referenceColor.lightness + posRange *(i/_paletteSize));
         }
         return;
       case PaletteOrganization.analogous:
@@ -67,10 +69,10 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
           }
         return;
       case PaletteOrganization.complementary:
-        double saturationVarianceComplementary = _saturationVarianceValue/(_paletteSize/2).round();
+        double saturationVarianceComplementary = _saturationVarianceValue/halfWay;
         double oppositeHue = (180-referenceColor.hue).abs();
 
-        for (int i = 0; i< (_paletteSize/2).round(); i++)
+        for (int i = 0; i< halfWay; i++)
           {
             palette[i] = referenceColor.withLightness((0.5 + luminanceVariance * i).clamp(0, 1));
 
@@ -84,16 +86,16 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
         palette[_paletteSize-1] = referenceColor.withHue(oppositeHue);
 
-        for (int i = (_paletteSize/2).round(); i< _paletteSize; i++)
+        for (int i = halfWay; i< _paletteSize; i++)
         {
-          palette[i] = palette[i].withLightness((0.5 + luminanceVariance * (i-(_paletteSize/2).round())).clamp(0, 1));
+          palette[i] = palette[i].withLightness((0.5 + luminanceVariance * (i-halfWay).clamp(0, 1)));
 
-          double hueDelta = (oppositeHue - hueVariance * (i-(_paletteSize/2).round()));
+          double hueDelta = (oppositeHue - hueVariance * (i-halfWay));
           if (hueDelta < 0) hueDelta+=360;
           if (hueDelta > 360) hueDelta-=360;
           palette[i] = palette[i].withHue(hueDelta);
 
-          palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * (i-(_paletteSize/2).round())).clamp(0, 1));
+          palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * (i-halfWay).clamp(0, 1)));
         }
         return;
       }

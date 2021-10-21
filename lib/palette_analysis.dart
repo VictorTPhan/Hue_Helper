@@ -83,7 +83,22 @@ class PaletteAnalysis extends StatelessWidget {
       print (getColorFromHue(val));
     }
   }
-  
+
+  List<colorType> huesAsColorTypes(List<List<int>> matrix)
+  {
+    List<colorType> list = List.filled(0, colorType.red, growable: true);
+
+    for(var i in matrix)
+    {
+      for(var j in i)
+        {
+          list.add(getColorFromHue(j));
+        }
+    }
+
+    return list;
+  }
+
   List<int> getAverageColors(List<List<int>> matrix)
   {
     //get the average hue of each color
@@ -110,19 +125,24 @@ class PaletteAnalysis extends StatelessWidget {
   Widget build(BuildContext context) {
 
     List<int> hueValues = List.filled(palette.length, 0);
-    List<int> saturationValues = List.filled(palette.length, 0);
-    List<int> lightnessValues = List.filled(palette.length, 0);
+    List<double> saturationValues = List.filled(palette.length, 0);
+    List<double> lightnessValues = List.filled(palette.length, 0);
 
     //save all values into hueValues
     for(int i = 0; i<palette.length; i++)
       {
         hueValues[i] = HSLColor.fromColor(palette[i]).hue.toInt();
-        saturationValues[i] = HSLColor.fromColor(palette[i]).saturation.toInt();
-        lightnessValues[i] = HSLColor.fromColor(palette[i]).lightness.toInt();
+        saturationValues[i] = HSLColor.fromColor(palette[i]).saturation.toDouble();
+        lightnessValues[i] = HSLColor.fromColor(palette[i]).lightness.toDouble();
+
+        print((saturationValues[i]*100).toInt().toString());
+        print((lightnessValues[i]*100).toInt().toString());
+        print("      ");
       }
 
     List<List<int>> matrix = generateHueMatrix(hueValues);
     List<int> averageColorHues = getAverageColors(matrix);
+    List<colorType> valuesAsColors = huesAsColorTypes(matrix);
     
     hueAnalysis(averageColorHues);
     listAllColors(averageColorHues);
@@ -166,36 +186,93 @@ class PaletteAnalysis extends StatelessWidget {
           ),
           Expanded(
             flex: 10,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFFF0000),
-                    Color(0xFEFFFF00),
-                    Color(0xFE00FF00),
-                    Color(0xFE00FFFF),
-                    Color(0xFE0000FF),
-                    Color(0xFEFF00FF),
-                    Color(0xFFFF0000)],
-                )
-              ),
-              child: Stack(
-                children: [
-                  for (var i in hueValues)
-                    Positioned(
-                        left: i/360 * MediaQuery.of(context).size.width,
-                        child: Text(
-                            i.toString(),
-                        ),
-                    )
-                ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFFF0000),
+                      Color(0xFEFFFF00),
+                      Color(0xFE00FF00),
+                      Color(0xFE00FFFF),
+                      Color(0xFE0000FF),
+                      Color(0xFEFF00FF),
+                      Color(0xFFFF0000)],
+                  )
+                ),
+                child: Stack(
+                  children: [
+                    for (var i in hueValues)
+                      Positioned(
+                          left: i/360 * MediaQuery.of(context).size.width,
+                          child: Icon(Icons.circle, color: Colors.black),
+                      )
+                  ],
+                ),
               ),
             ),
           ),
           Expanded(
-              flex: 50,
+            flex: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFA8A8A8),
+                        Color(0xFE0056FF),
+                      ]
+                    )
+                ),
+                child: Stack(
+                  children: [
+                    for (var i in saturationValues)
+                      Positioned(
+                        left: i/1.0 * MediaQuery.of(context).size.width,
+                        child: Icon(Icons.circle, color: Colors.white),
+                      )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF000000),
+                          Color(0xFEFFFFFF),
+                        ]
+                    )
+                ),
+                child: Stack(
+                  children: [
+                    for (var i in lightnessValues)
+                      Positioned(
+                        left: i/1.0 * MediaQuery.of(context).size.width,
+                        child:
+                          //Text(i.toString())
+                          Icon(Icons.circle, color: Colors.red),
+                      )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+              flex: 40,
               child: Column(
                 children: [
                   //palette type
