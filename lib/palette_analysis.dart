@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hue_helper/palette_type.dart';
-
 import 'main.dart';
+
+enum paletteType {monochromatic, complementary, analogous, none}
 
 class PaletteAnalysis extends StatelessWidget {
   const PaletteAnalysis({Key? key, required this.palette}) : super(key: key);
 
   final List<Color> palette;
 
-  void determinePaletteType(List<int> values)
+
+
+  void hueAnalysis(List<int> values)
   {
     //sort values from lowest to highest
     values.sort();
@@ -35,7 +37,8 @@ class PaletteAnalysis extends StatelessWidget {
         }
     }
 
-    List<int> colorIndices = List.filled(amountOfColors, 0, growable: true);
+    print("amount of colors: " + amountOfColors.toString());
+
     //var colorMatrix = new List.generate(amountOfColors, (_) => new List.filled(6, 0, growable: false));
     var colorMatrix = new List.generate(1, (_) => new List.filled(0, 0, growable: true), growable: true);
 
@@ -47,46 +50,67 @@ class PaletteAnalysis extends StatelessWidget {
 
     for(int i = 1; i<values.length; i++)
     {
-
+      //if the next value goes over a certain threshold
       if (hueDeltas[i-1] > 25)
       {
-        colorIndices[currentColorIndex] = i;
         currentColorIndex++;
+
+        //add a new list (this represents a new color)
         colorMatrix.add(new List.filled(0, 0, growable: true));
       }
 
+      //add the value to the current color
       colorMatrix[currentColorIndex].add(values[i]);
-
-      /*
-      //hue variance is an arbitrary number and is hardcoded
-      //if true, create a new color
-      if (hueDeltas[i-1] > 25)
-      {
-        colorIndices[currentColorIndex] = i;
-        currentColorIndex++;
-      }
-
-       */
     }
 
-    print(colorIndices.toString());
     print(colorMatrix.toString());
 
-    print("amount of colors: " + amountOfColors.toString());
+    //get the average hue of each color
+    List<int> averageColorHues = List.filled(0, 0, growable: true);
+
+    for(var i in colorMatrix)
+      {
+        if (i.length == 1)
+          averageColorHues.add(i[0]);
+        else {
+          int total = 0;
+          for(int j in i) total+=j;
+
+          averageColorHues.add(total~/i.length);
+        }
+      }
+
+    print(averageColorHues.toString());
+
+    //represents the distance between average hues in colors
+    List<int> averageHueDeltas = List.filled(averageColorHues.length-1, 0);
+
+    //get the hue variance between each color
+    for(int i = 0; i<averageColorHues.length-1; i++)
+    {
+      int hueDelta = averageColorHues[i+1]-averageColorHues[i];
+      averageHueDeltas[i] = hueDelta;
+    }
+
+    print(averageHueDeltas.toString());
   }
 
   @override
   Widget build(BuildContext context) {
 
     List<int> hueValues = List.filled(palette.length, 0);
+    List<int> saturationValues = List.filled(palette.length, 0);
+    List<int> lightnessValues = List.filled(palette.length, 0);
 
     //save all values into hueValues
     for(int i = 0; i<palette.length; i++)
       {
         hueValues[i] = HSLColor.fromColor(palette[i]).hue.toInt();
+        saturationValues[i] = HSLColor.fromColor(palette[i]).saturation.toInt();
+        lightnessValues[i] = HSLColor.fromColor(palette[i]).lightness.toInt();
       }
 
-    determinePaletteType(hueValues);
+    hueAnalysis(hueValues);
 
     return Scaffold(
         body: Center(
