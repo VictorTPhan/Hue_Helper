@@ -40,18 +40,30 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
         //at luminanceVariance = 0, the colors should all be the base color
         //at luminanceVariance = 1, the colors should range from pitch black to pure white
 
-        double negRange = referenceColor.lightness * (_luminanceVarianceValue/1.0);
+        //limit hue variance on monochromatic colors
+        double hueLimiter = 0.5;
 
+        double negLumRange = referenceColor.lightness * (_luminanceVarianceValue/1.0);
         for (int i = 1; i <= halfWay; i++)
         {
-            palette[i-1] = referenceColor.withLightness(referenceColor.lightness - negRange * ((halfWay-i+1)/halfWay));
+            palette[i-1] = referenceColor.withLightness(referenceColor.lightness - negLumRange * ((halfWay-i+1)/halfWay));
         }
 
-        double posRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
+        double posLumRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
         for (int i = halfWay+2; i <= _paletteSize; i++)
         {
-          palette[i-1] = referenceColor.withLightness(referenceColor.lightness + posRange *(i/_paletteSize));
+          palette[i-1] = referenceColor.withLightness(referenceColor.lightness + posLumRange *(i/_paletteSize));
         }
+
+        for (int i = 0; i<_paletteSize; i++) {
+          double hueDelta = referenceColor.hue + hueVariance * i;
+          if (hueDelta < 0) hueDelta+=360;
+          if (hueDelta > 360) hueDelta-=360;
+          palette[i] = palette[i].withHue(hueDelta);
+
+          palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
+        }
+
         return;
       case PaletteOrganization.analogous:
         for (int i = 0; i<_paletteSize; i++)
@@ -60,6 +72,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
             if (lumDelta < 0) lumDelta=0;
             if (lumDelta > 1) lumDelta=1;
             palette[i] = referenceColor.withLightness(lumDelta);
+
             palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
 
             double hueDelta = referenceColor.hue + hueVariance * i;
@@ -69,7 +82,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
           }
         return;
       case PaletteOrganization.complementary:
-        double saturationVarianceComplementary = _saturationVarianceValue/halfWay;
+        double saturationVarianceComplementary = _saturationVarianceValue/2;
         double oppositeHue = (180-referenceColor.hue).abs();
 
         for (int i = 0; i< halfWay; i++)
@@ -95,7 +108,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
           if (hueDelta > 360) hueDelta-=360;
           palette[i] = palette[i].withHue(hueDelta);
 
-          palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * (i-halfWay).clamp(0, 1)));
+          palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary).clamp(0, 1));
         }
         return;
       }
