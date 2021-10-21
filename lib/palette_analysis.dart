@@ -28,7 +28,7 @@ class PaletteAnalysis extends StatelessWidget {
     return (getColorFromHue(lastColorValue) == getColorFromHue(hueValue))? false: true;
   }
 
-  void hueAnalysis(List<int> values)
+  List<List<int>> generateHueMatrix(List<int> values)
   {
     //sort values from lowest to highest
     values.sort();
@@ -58,41 +58,52 @@ class PaletteAnalysis extends StatelessWidget {
     }
 
     print("colorMatrix: " + colorMatrix.toString());
-
-    //get the average hue of each color
-    List<int> averageColorHues = List.filled(0, 0, growable: true);
-
-    for(var i in colorMatrix)
-      {
-        if (i.length == 1)
-          averageColorHues.add(i[0]);
-        else {
-          int total = 0;
-          for(int j in i) total+=j;
-
-          averageColorHues.add(total~/i.length);
-        }
-      }
-
-    print(averageColorHues.toString());
-
+    return colorMatrix;
+  }
+  
+  void hueAnalysis(List<int> averageHues)
+  {
     //represents the distance between average hues in colors
-    List<int> averageHueDeltas = List.filled(averageColorHues.length-1, 0);
+    List<int> averageHueDeltas = List.filled(averageHues.length-1, 0);
 
     //get the hue variance between each color
-    for(int i = 0; i<averageColorHues.length-1; i++)
+    for(int i = 0; i<averageHues.length-1; i++)
     {
-      int hueDelta = averageColorHues[i+1]-averageColorHues[i];
+      int hueDelta = averageHues[i+1]-averageHues[i];
       averageHueDeltas[i] = hueDelta;
     }
 
     print(averageHueDeltas.toString());
-    print(colorMatrix.length);
+  }
 
-    for(int val in averageColorHues)
-      {
-        print (getColorFromHue(val));
+  void listAllColors(List<int> values)
+  {
+    for(int val in values)
+    {
+      print (getColorFromHue(val));
+    }
+  }
+  
+  List<int> getAverageColors(List<List<int>> matrix)
+  {
+    //get the average hue of each color
+    List<int> averageColorHues = List.filled(0, 0, growable: true);
+
+    for(var i in matrix)
+    {
+      if (i.length == 1)
+        averageColorHues.add(i[0]);
+      else {
+        int total = 0;
+        for(int j in i) total+=j;
+
+        averageColorHues.add(total~/i.length);
       }
+    }
+
+    print(averageColorHues.toString());
+    
+    return averageColorHues;
   }
 
   @override
@@ -110,7 +121,11 @@ class PaletteAnalysis extends StatelessWidget {
         lightnessValues[i] = HSLColor.fromColor(palette[i]).lightness.toInt();
       }
 
-    hueAnalysis(hueValues);
+    List<List<int>> matrix = generateHueMatrix(hueValues);
+    List<int> averageColorHues = getAverageColors(matrix);
+    
+    hueAnalysis(averageColorHues);
+    listAllColors(averageColorHues);
 
     return Scaffold(
         body: Center(
