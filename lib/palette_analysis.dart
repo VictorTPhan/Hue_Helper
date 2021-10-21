@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 
+enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta}
 enum paletteType {monochromatic, complementary, analogous, none}
 
 class PaletteAnalysis extends StatelessWidget {
@@ -8,36 +9,29 @@ class PaletteAnalysis extends StatelessWidget {
 
   final List<Color> palette;
 
+  colorType getColorFromHue(int val)
+  {
+    return (val > 337 || val < 14)? colorType.red:
+    (val < 41)? colorType.orange:
+    (val < 71)? colorType.yellow:
+    (val < 99)? colorType.lime:
+    (val < 151)? colorType.green:
+    (val < 207)? colorType.cyan:
+    (val < 257)? colorType.blue:
+    (val < 292)? colorType.purple:
+    (val < 336)? colorType.magenta: colorType.magenta;
+  }
 
+  bool warrantsNewColor(int hueValue, int lastColorValue)
+  {
+    //what color was the last value?, and does this value fall within that range?
+    return (getColorFromHue(lastColorValue) == getColorFromHue(hueValue))? false: true;
+  }
 
   void hueAnalysis(List<int> values)
   {
     //sort values from lowest to highest
     values.sort();
-
-    //represents the distance between hue in colors
-    List<int> hueDeltas = List.filled(palette.length-1, 0);
-
-    //records hueDeltas
-    for(int i = 0; i<values.length-1; i++)
-    {
-      int hueDelta = values[i+1]-values[i];
-      hueDeltas[i] = hueDelta;
-    }
-
-    int amountOfColors = 1;
-
-    //records the amount of colors
-    for(int i = 0; i<hueDeltas.length; i++)
-    {
-      //hue variance is an arbitrary number and is hardcoded
-      if (hueDeltas[i] > 25)
-        {
-          amountOfColors++;
-        }
-    }
-
-    print("amount of colors: " + amountOfColors.toString());
 
     //var colorMatrix = new List.generate(amountOfColors, (_) => new List.filled(6, 0, growable: false));
     var colorMatrix = new List.generate(1, (_) => new List.filled(0, 0, growable: true), growable: true);
@@ -51,7 +45,7 @@ class PaletteAnalysis extends StatelessWidget {
     for(int i = 1; i<values.length; i++)
     {
       //if the next value goes over a certain threshold
-      if (hueDeltas[i-1] > 25)
+      if (warrantsNewColor(values[i], values[i-1]))
       {
         currentColorIndex++;
 
@@ -63,7 +57,7 @@ class PaletteAnalysis extends StatelessWidget {
       colorMatrix[currentColorIndex].add(values[i]);
     }
 
-    print(colorMatrix.toString());
+    print("colorMatrix: " + colorMatrix.toString());
 
     //get the average hue of each color
     List<int> averageColorHues = List.filled(0, 0, growable: true);
@@ -93,6 +87,12 @@ class PaletteAnalysis extends StatelessWidget {
     }
 
     print(averageHueDeltas.toString());
+    print(colorMatrix.length);
+
+    for(int val in averageColorHues)
+      {
+        print (getColorFromHue(val));
+      }
   }
 
   @override
