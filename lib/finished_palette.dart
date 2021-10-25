@@ -104,7 +104,7 @@ class _FinishedPaletteState extends State<FinishedPalette> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MyApp()),
+                                    builder: (context) => MyHomePage(title: '',)),
                               );
                             },
                           ),

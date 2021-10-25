@@ -29,15 +29,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -45,6 +36,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  Widget createNavButton(String text, Color buttonColor, Function nextScreen)
+  {
+    return Expanded(
+      child: Container(
+          margin: EdgeInsets.only(top: 20, bottom: 20),
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: buttonColor,
+                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
+                ),),
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () { nextScreen(); })),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,94 +83,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: ThemeColors.primaryColor,
-                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
-                              ),),
-                              child: Text(
-                                'i need a palette',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PaletteType()),
-                                );
-                              })),
-                    ),
-                    Expanded(
-                      child: Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: ThemeColors.secondaryColor,
-                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
-                              ),),
-                              child: Text(
-                                'i have a palette',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    //TODO: create a palette input class
-                                      builder: (context) => PaletteInput()),
-                                );
-                              })),
-                    ),
-                    Expanded(
-                      child: Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: ThemeColors.tertiaryColor,
-                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
-                              ),),
-                              child: Text(
-                                'any palette, please',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              onPressed: () {
-                                //Navigator.push(
-                                  //context,
-                                  //MaterialPageRoute(
-                                    //TODO: Create a random palette descriptor generator and send that data to the finished palette screen
-                                      //builder: (context) => FinishedPalette()),
-                                //);
-                              })),
-                    ),
-                    Expanded(
-                      child: Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: ThemeColors.fourthColor,
-                                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
-                              ),),
-                              child: Text(
-                                'my palettes',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              onPressed: () {})),
-                    ),
+                    createNavButton('i need a palette', ThemeColors.primaryColor, () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PaletteType()),
+                      );
+                    }),
+                    createNavButton('i have a palette', ThemeColors.secondaryColor, () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PaletteInput()),
+                      );
+                    }),
+                    createNavButton('any palette, please', ThemeColors.tertiaryColor, () {
+                     // Navigator.push(
+                        //context,
+                        //MaterialPageRoute(
+                        //    builder: (context) => PaletteInput()),
+                     // );
+                    }),
                   ],
                 ),
               )),
