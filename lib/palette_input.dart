@@ -124,7 +124,7 @@ class _PaletteInputState extends State<PaletteInput> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PaletteAnalysis(palette: palette)),
+                        builder: (context) => PaletteAnalysis(palette: palette, paletteSize: _paletteSize,)),
                   );
                 }),
               ],
