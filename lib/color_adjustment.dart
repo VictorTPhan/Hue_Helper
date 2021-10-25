@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:hue_helper/basic_widgets.dart';
 import 'package:hue_helper/palette_adjustment.dart';
 import 'color_data.dart';
 import 'main.dart';
@@ -125,139 +126,21 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: ThemeColors.primaryColor,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'lets adjust the color a bit',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
+                createTopText("let's adjust the color"),
                 Expanded(
                     flex: 80,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.secondaryColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('          Hue          ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how much should the hue differ?',
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _currentHueModifierValue,
-                                    min: -100,
-                                    max: 100,
-                                    label: _hueModifier.round().toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _currentHueModifierValue = value;
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.tertiaryColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('   Saturation    ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how intense is the hue?',
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _currentSaturationValue,
-                                    min: 0,
-                                    max: 1,
-                                    label: _currentSaturationValue.round().toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _currentSaturationValue = value;
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.fourthColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('   Luminance   ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how bright is the color?',
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _currentLuminanceValue,
-                                    min: 0,
-                                    max: 1,
-                                    label: _currentLuminanceValue.round().toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _currentLuminanceValue = value;
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        createSlider(_currentHueModifierValue, 'Hue', 'what specific hue do you want?', -100, 100, (double value)
+                        { setState(() { _currentHueModifierValue = value; }); return setState; }),
+
+                        createSlider(_currentSaturationValue, 'Saturation', 'how intense should this color be?', 0, 1, (double value)
+                        { setState(() { _currentSaturationValue = value; }); return setState; }),
+
+                        createSlider(_currentLuminanceValue, 'Luminance', 'how bright should this color be?', 0, 1, (double value)
+                        { setState(() { _currentLuminanceValue = value; }); return setState; }),
+
                         Expanded(
                           child: Container(
                               decoration: BoxDecoration(
@@ -269,35 +152,13 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                       ],
                     )
                 ),
-                Expanded(
-                  flex: 10,
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 15),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              fixedSize: Size.fromHeight(100),
-                              backgroundColor: ThemeColors.fourthColor,
-                              shape: CircleBorder(),
-                            ),
-                            child: Icon(Icons.arrow_forward, color: Colors.black),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PaletteAdjustment(adjustedColor: selectedColor.toColor())),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
+                createBottomRow(Icons.arrow_forward, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PaletteAdjustment(adjustedColor: selectedColor.toColor())),
+                  );
+                }),
               ],
             )));
   }

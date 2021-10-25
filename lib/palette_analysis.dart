@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'basic_widgets.dart';
 import 'main.dart';
 
 enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta}
@@ -151,20 +152,7 @@ class PaletteAnalysis extends StatelessWidget {
         body: Center(
         child: Column(
         children: [
-          Expanded(
-          flex: 10,
-          child: Container(
-            color: Theme.of(context).primaryColor,
-            alignment: Alignment.center,
-            child: Text(
-              'palette analysis',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )),
+          createTopText("let's see..."),
           Expanded(
             flex: 20,
             child: Container(
@@ -283,30 +271,13 @@ class PaletteAnalysis extends StatelessWidget {
                 ],
               )
           ),
-          Expanded(
-            flex: 10,
-            child: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(right: 15),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        fixedSize: Size.fromHeight(100),
-                        backgroundColor: ThemeColors.fourthColor,
-                        shape: CircleBorder(),
-                      ),
-                      child: Icon(Icons.arrow_forward, color: Colors.black),
-                      onPressed: () {
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-          )
+          createBottomRow(Icons.settings, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MyApp()),
+            );
+          }),
           ]
         )
       )

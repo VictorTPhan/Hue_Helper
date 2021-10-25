@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/basic_widgets.dart';
 import 'package:hue_helper/palette_type.dart';
 
 import 'finished_palette.dart';
@@ -15,7 +16,7 @@ class PaletteAdjustment extends StatefulWidget {
 
 class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
-  double _hueVarianceValue = 100;
+  double _hueVarianceValue = 90;
   double _saturationVarianceValue = 0;
   double _luminanceVarianceValue = 0; //what is the absolute brightest the palette can be?
   int _paletteSize = 4;
@@ -124,205 +125,32 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
     //generate a palette
     calculateOtherColors();
 
+    double hueMin, hueMax;
+    if (PaletteTypeState.type == PaletteOrganization.analogous) {hueMin = 90.0; hueMax = 180.0;}
+    else {hueMin = 0; hueMax = 90.0;}
+
     return Scaffold(
         body: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: ThemeColors.primaryColor,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'lets adjust the contrast',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
+                createTopText("let's diversify our colors"),
                 Expanded(
                     flex: 70,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.secondaryColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('          Hue          ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how much should the other colors differ in hue?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              //if analogous palette, expand hue variance
-                              if (PaletteTypeState.type == PaletteOrganization.analogous)
-                                Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _hueVarianceValue,
-                                    min: 90,
-                                    max: 180,
-                                    label: _hueVarianceValue.round().toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _hueVarianceValue = value;
-                                      });
-                                    }
-                                ),
-                              )
-                              else
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Slider(
-                                      activeColor: ThemeColors.secondaryColor,
-                                      inactiveColor: ThemeColors.fourthColor,
-                                      value: _hueVarianceValue,
-                                      min: 0,
-                                      max: 100,
-                                      label: _hueVarianceValue.round().toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _hueVarianceValue = value;
-                                        });
-                                      }
-                                  ),
-                                )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.tertiaryColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('   Saturation    ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how intense should the other hues be?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _saturationVarianceValue,
-                                    min: 0,
-                                    max: 1,
-                                    label: _saturationVarianceValue.round().toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _saturationVarianceValue = value;
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.fourthColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('   Luminance   ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how bright should the other colors be?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _luminanceVarianceValue,
-                                    min: 0,
-                                    max: 1,
-                                    label: _luminanceVarianceValue.round().toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _luminanceVarianceValue = value;
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: ThemeColors.fourthColor,
-                                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text('   Palette Size   ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
-                                    )),
-                              ),
-                              Text('how many colors do you want?',
-                                  style: TextStyle(
-                                    color: ThemeColors.primaryColor,
-                                    fontSize: 20,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Slider(
-                                    activeColor: ThemeColors.secondaryColor,
-                                    inactiveColor: ThemeColors.fourthColor,
-                                    value: _paletteSize.toDouble(),
-                                    min: 2,
-                                    max: 6,
-                                    divisions: 4,
-                                    label: _paletteSize.toString(),
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        _paletteSize = value.toInt();
-                                      });
-                                    }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        createSlider(_hueVarianceValue, 'Hue', 'how different should hues be?', hueMin, hueMax, (double value)
+                        { setState(() { _hueVarianceValue = value; }); return setState; }),
+
+                        createSlider(_saturationVarianceValue, 'Saturation', 'how denser should the hues get?', 0, 1, (double value)
+                        { setState(() { _saturationVarianceValue = value; }); return setState; }),
+
+                        createSlider(_luminanceVarianceValue, 'Luminance', 'how brighter should the hues get?', 0, 1, (double value)
+                        { setState(() { _luminanceVarianceValue = value; }); return setState; }),
+
+                        createSlider(_paletteSize.toDouble(), 'Palette Size', 'how big should your palette be?', 2, 6, (double value)
+                        { setState(() { _paletteSize = value.toInt(); }); return setState; }),
                       ],
                     )
                 ),
@@ -345,35 +173,13 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 10,
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 15),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              fixedSize: Size.fromHeight(100),
-                              backgroundColor: ThemeColors.fourthColor,
-                              shape: CircleBorder(),
-                            ),
-                            child: Icon(Icons.arrow_forward, color: Colors.black),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FinishedPalette(finalPalette: palette,)),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
+                createBottomRow(Icons.arrow_forward, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FinishedPalette(finalPalette: palette)),
+                  );
+                }),
               ],
             )));
   }

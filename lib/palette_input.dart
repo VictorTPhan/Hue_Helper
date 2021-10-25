@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:hue_helper/basic_widgets.dart';
 import 'package:hue_helper/palette_analysis.dart';
 
 import 'main.dart';
@@ -41,20 +42,7 @@ class _PaletteInputState extends State<PaletteInput> {
         body: Center(
             child: Column(
               children: [
-                Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: Theme.of(context).primaryColor,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'input your palette here',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
+                createTopText("input your palette"),
                 Expanded(
                     flex: 20,
                     child: Column(
@@ -132,36 +120,13 @@ class _PaletteInputState extends State<PaletteInput> {
                     pickerAreaHeightPercent: 0.8,
                   ),
                 ),
-                Expanded(
-                  flex: 10,
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 15),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              fixedSize: Size.fromHeight(100),
-                              backgroundColor: ThemeColors.fourthColor,
-                              shape: CircleBorder(),
-                            ),
-                            child: Icon(Icons.arrow_forward, color: Colors.black),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  //TODO: Create a settings screen
-                                    builder: (context) => PaletteAnalysis(palette: palette.sublist(0, _paletteSize))),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
+                createBottomRow(Icons.settings, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PaletteAnalysis(palette: palette)),
+                  );
+                }),
               ],
             )));
   }

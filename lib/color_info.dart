@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/basic_widgets.dart';
 import 'package:hue_helper/color_adjustment.dart';
 import 'color_data.dart';
 
 class ColorInfo extends StatelessWidget {
+
+  String get typeText {
+    switch (colorData.type){
+      case colorType.primary:
+        return 'primary';
+      case colorType.secondary:
+        return 'secondary';
+      case colorType.tertiary:
+        return 'tertiary';
+      default:
+        return 'UNKNOWN';
+    }
+  }
 
   const ColorInfo({Key? key, required this.colorData}) : super(key: key);
 
@@ -16,20 +30,7 @@ class ColorInfo extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: colorData.color,
-                      alignment: Alignment.center,
-                      child: Text(
-                        colorData.name,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
+                createTopText(colorData.name),
                 Expanded(
                     flex: 80,
                     child: Container(
@@ -80,49 +81,14 @@ class ColorInfo extends StatelessWidget {
                         ],
                       ),
                     )),
-                Expanded(
-                  flex: 10,
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 15),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              fixedSize: Size.fromHeight(100),
-                              backgroundColor: colorData.color,
-                              shape: CircleBorder(),
-                            ),
-                            child: Icon(Icons.arrow_forward, color: Colors.black),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ColorAdjustment(givenColor: colorData)),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
+                createBottomRow(Icons.arrow_forward, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ColorAdjustment(givenColor: colorData)),
+                  );
+                }),
               ],
             )));
-  }
-
-  String get typeText {
-    switch (colorData.type){
-      case colorType.primary:
-        return 'primary';
-      case colorType.secondary:
-        return 'secondary';
-      case colorType.tertiary:
-        return 'tertiary';
-      default:
-        return 'UNKNOWN';
-    }
   }
 }

@@ -3,18 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hue_helper/palette_input.dart';
 import 'package:hue_helper/settings.dart';
+import 'basic_widgets.dart';
 import 'palette_type.dart';
 
 void main() {
   runApp(MyApp());
-}
-
-class ThemeColors {
-  static const primaryColor = Color(0xFF005CE7);
-  static const secondaryColor = Color(0xFF1A75FF);
-  static const tertiaryColor = Color(0xFF3D8BFF);
-  static const fourthColor = Color(0xFF61A0FF);
-  static const backgroundColor = Color(0xFFD1E3FF); //should be very light
 }
 
 class MyApp extends StatelessWidget {
@@ -169,35 +162,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               )),
-          Expanded(
-              flex: 10,
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          fixedSize: Size.fromHeight(100),
-                          backgroundColor: ThemeColors.fourthColor,
-                          shape: CircleBorder(),
-                        ),
-                        child: Icon(Icons.settings, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              //TODO: Create a settings screen
-                                builder: (context) => Settings()),
-                          );
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              ))
+          createBottomRow(Icons.settings, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Settings()),
+            );
+          }),
         ],
       ),
     );

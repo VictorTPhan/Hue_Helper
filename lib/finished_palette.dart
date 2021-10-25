@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/basic_widgets.dart';
 import 'package:hue_helper/main.dart';
 
 class FinishedPalette extends StatefulWidget {
@@ -44,20 +45,7 @@ class _FinishedPaletteState extends State<FinishedPalette> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: ThemeColors.primaryColor,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'voila!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
+                createTopText("here it is!"),
                 Expanded(
                     flex: 80,
                     child: Container(

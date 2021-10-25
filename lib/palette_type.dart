@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:hue_helper/basic_widgets.dart';
 import 'package:hue_helper/palette_info.dart';
 
 import 'main.dart';
@@ -24,20 +25,7 @@ class PaletteTypeState extends State<PaletteType> {
         body: Center(
             child: Column(
       children: [
-        Expanded(
-            flex: 10,
-            child: Container(
-              color: ThemeColors.primaryColor,
-              alignment: Alignment.center,
-              child: Text(
-                'choose a palette type',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )),
+        createTopText("let's pick a palette type"),
         Expanded(
           flex: 90,
           child: Container(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hue_helper/color_choice.dart';
 import 'package:hue_helper/main.dart';
 
+import 'basic_widgets.dart';
+
 class PaletteInfo extends StatelessWidget {
   const PaletteInfo({Key? key,
     required this.paletteType,
@@ -20,20 +22,7 @@ class PaletteInfo extends StatelessWidget {
         body: Center(
             child: Column(
               children: [
-                Expanded(
-                    flex: 10,
-                    child: Container(
-                      color: ThemeColors.primaryColor,
-                      alignment: Alignment.center,
-                      child: Text(
-                        paletteType,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
+                createTopText(paletteType),
                 Expanded(
                     flex: 80,
                     child: Column(
@@ -89,35 +78,13 @@ class PaletteInfo extends StatelessWidget {
                         ),
                       ],)
                 ),
-                Expanded(
-                  flex: 10,
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 15),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              fixedSize: Size.fromHeight(100),
-                              backgroundColor: ThemeColors.fourthColor,
-                              shape: CircleBorder(),
-                            ),
-                            child: Icon(Icons.arrow_forward, color: Colors.white),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ColorChoice()),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
+                createBottomRow(Icons.arrow_forward, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ColorChoice()),
+                  );
+                }),
               ],
             )));
   }
