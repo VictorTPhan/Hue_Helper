@@ -83,7 +83,7 @@ class _FinishedPaletteState extends State<FinishedPalette> {
                               backgroundColor: ThemeColors.fourthColor,
                               shape: CircleBorder(),
                             ),
-                            child: Icon(Icons.palette, color: Colors.white),
+                            child: Icon(Icons.palette, color: Colors.black),
                             onPressed: () {
                               setState(() {
                                 toggleHexCode();

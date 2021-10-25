@@ -3,11 +3,11 @@ import 'package:hue_helper/palette_type.dart';
 
 //these will be change-able in the settings menu
 class ThemeColors {
-    static const primaryColor = Color(0xFF005CE7);
-    static const secondaryColor = Color(0xFF1A75FF);
-    static const tertiaryColor = Color(0xFF3D8BFF);
-    static const fourthColor = Color(0xFF61A0FF);
-    static const backgroundColor = Color(0xFFD1E3FF); //should be very light
+    static Color primaryColor = Color(0xFF005CE7);
+    static Color secondaryColor = Color(0xFF1A75FF);
+    static Color tertiaryColor = Color(0xFF3D8BFF);
+    static Color fourthColor = Color(0xFF61A0FF);
+    static Color backgroundColor = Color(0xFFD1E3FF); //should be very light
 }
 
 Widget createTopText(String topText)
@@ -61,6 +61,9 @@ Widget createBottomRow(IconData iconLabel, Function nextScreen)
 
 Widget createSlider(double adjustableVariable, String title, String description, double min, double max, Function onSliderChanged(double value))
 {
+  if (adjustableVariable > max) adjustableVariable = max;
+  if (adjustableVariable < min) adjustableVariable = min;
+
   return Container(
     margin: EdgeInsets.only(left: 10, right: 10, top: 10),
     child: Column(
