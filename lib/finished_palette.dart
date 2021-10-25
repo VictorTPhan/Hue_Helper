@@ -99,7 +99,7 @@ class _FinishedPaletteState extends State<FinishedPalette> {
                               backgroundColor: ThemeColors.fourthColor,
                               shape: CircleBorder(),
                             ),
-                            child: Icon(Icons.arrow_forward, color: Colors.white),
+                            child: Icon(Icons.arrow_forward, color: Colors.black),
                             onPressed: () {
                               Navigator.push(
                                 context,

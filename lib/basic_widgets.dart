@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hue_helper/palette_type.dart';
 
 //these will be change-able in the settings menu
 class ThemeColors {
@@ -94,4 +95,95 @@ Widget createSlider(double adjustableVariable, String title, String description,
       ],
     ),
   );
+}
+
+//depending on the palette organization, this will assign them differently
+//assume palette[0] = adjustedColor
+List<HSLColor> calculateOtherColors(PaletteOrganization type, List<HSLColor> palette, int _paletteSize, double _hueVarianceValue, double _saturationVarianceValue, double _luminanceVarianceValue)
+{
+  HSLColor referenceColor = palette[0];
+  double hueVariance = _hueVarianceValue/_paletteSize;
+  double saturationVariance = _saturationVarianceValue/_paletteSize;
+
+  int halfWay = (_paletteSize/2).round();
+
+  switch(type)
+  {
+    case PaletteOrganization.monochromatic:
+
+    //at luminanceVariance = 0, the colors should all be the base color
+    //at luminanceVariance = 1, the colors should range from pitch black to pure white
+
+      double negLumRange = referenceColor.lightness * (_luminanceVarianceValue/1.0);
+      for (int i = 1; i <= halfWay; i++)
+      {
+        palette[i-1] = referenceColor.withLightness(referenceColor.lightness - negLumRange * ((halfWay-i+1)/halfWay));
+      }
+
+      double posLumRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
+      for (int i = halfWay+2; i <= _paletteSize; i++)
+      {
+        palette[i-1] = referenceColor.withLightness(referenceColor.lightness + posLumRange *(i/_paletteSize));
+      }
+
+      //subtly change hue and saturation
+      for (int i = 0; i<_paletteSize; i++) {
+        double hueDelta = referenceColor.hue + hueVariance * i;
+        if (hueDelta < 0) hueDelta+=360;
+        if (hueDelta > 360) hueDelta-=360;
+        palette[i] = palette[i].withHue(hueDelta);
+
+        palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
+      }
+
+      return palette;
+    case PaletteOrganization.analogous:
+
+      double posLumRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
+
+      for (int i = 0; i<_paletteSize; i++)
+      {
+        //change luminance
+        palette[i] = referenceColor.withLightness(referenceColor.lightness + posLumRange * (i/_paletteSize));
+
+        //change saturation
+        palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
+
+        //change hues
+        double hueDelta = referenceColor.hue + hueVariance * i;
+        if (hueDelta < 0) hueDelta+=360;
+        if (hueDelta > 360) hueDelta-=360;
+        palette[i] = palette[i].withHue(hueDelta);
+      }
+      return palette;
+    case PaletteOrganization.complementary:
+      double saturationVarianceComplementary = _saturationVarianceValue/2;
+      double oppositeHue = (180-referenceColor.hue).abs();
+      double posLumRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
+
+      for (int i = 0; i< halfWay; i++)
+      {
+        palette[i] = referenceColor.withLightness(referenceColor.lightness + posLumRange * ((i+1)/halfWay));
+
+        double hueDelta = referenceColor.hue + hueVariance * i;
+        if (hueDelta < 0) hueDelta+=360;
+        if (hueDelta > 360) hueDelta-=360;
+        palette[i] = palette[i].withHue(hueDelta);
+
+        palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * i).clamp(0, 1));
+      }
+
+      for (int i = halfWay; i< _paletteSize; i++)
+      {
+        palette[i] = referenceColor.withLightness(referenceColor.lightness + posLumRange * (i-2)/(_paletteSize-halfWay));
+
+        double hueDelta = (oppositeHue - hueVariance * (i-halfWay));
+        if (hueDelta < 0) hueDelta+=360;
+        if (hueDelta > 360) hueDelta-=360;
+        palette[i] = palette[i].withHue(hueDelta);
+
+        palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary).clamp(0, 1));
+      }
+      return palette;
+  }
 }
