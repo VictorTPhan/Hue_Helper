@@ -27,7 +27,6 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
   void calculateOtherColors()
   {
     HSLColor referenceColor = HSLColor.fromColor(widget.adjustedColor);
-    double luminanceVariance = _luminanceVarianceValue/_paletteSize;
     double hueVariance = _hueVarianceValue/_paletteSize;
     double saturationVariance = _saturationVarianceValue/_paletteSize;
 
