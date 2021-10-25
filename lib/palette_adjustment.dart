@@ -25,7 +25,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
   //depending on the palette organization, this will assign them differently
   //assume palette[0] = adjustedColor
-  void calculateOtherColors()
+  List<HSLColor> calculateOtherColors()
   {
     HSLColor referenceColor = HSLColor.fromColor(widget.adjustedColor);
     double hueVariance = _hueVarianceValue/_paletteSize;
@@ -62,7 +62,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
           palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVariance * i).clamp(0, 1));
         }
 
-        return;
+        return palette;
       case PaletteOrganization.analogous:
 
         double posLumRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
@@ -81,7 +81,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
             if (hueDelta > 360) hueDelta-=360;
             palette[i] = palette[i].withHue(hueDelta);
           }
-        return;
+        return palette;
       case PaletteOrganization.complementary:
         double saturationVarianceComplementary = _saturationVarianceValue/2;
         double oppositeHue = (180-referenceColor.hue).abs();
@@ -110,7 +110,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
 
           palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary).clamp(0, 1));
         }
-        return;
+        return palette;
       }
   }
 
@@ -123,7 +123,7 @@ class _PaletteAdjustmentState extends State<PaletteAdjustment> {
     palette = List.filled(_paletteSize, mainPaletteColor);
 
     //generate a palette
-    calculateOtherColors();
+    palette = calculateOtherColors();
 
     double hueMin, hueMax;
     if (PaletteTypeState.type == PaletteOrganization.analogous) {hueMin = 90.0; hueMax = 180.0;}
