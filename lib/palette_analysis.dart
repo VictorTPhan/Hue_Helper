@@ -6,6 +6,8 @@ import 'main.dart';
 enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta}
 enum paletteType {monochromatic, complementary, analogous, none}
 enum paletteRigidity {strong, loose, none} //how much does the palette fit into one of the 3 types?
+enum luminanceContrast {strong, solid, weak}
+enum luminanceVariance {consistent, inconsistent} //how evenly spaced are luminance values?
 
 class PaletteInfo //we will put any information about the palette that we analyze here
 {
@@ -18,21 +20,47 @@ class PaletteInfo //we will put any information about the palette that we analyz
    String getTypeString()
    {
      switch(type){
-       case paletteType.analogous: return "Analogous";
-       case paletteType.complementary: return "Complementary";
-       case paletteType.monochromatic: return "Monochromatic";
-       case paletteType.none: return "None";
+       case paletteType.analogous: return "analogous";
+       case paletteType.complementary: return "complementary";
+       case paletteType.monochromatic: return "monochromatic";
+       case paletteType.none: return "not harmonious";
      }
    }
 
    String getRigidityString()
    {
      switch (rigidity){
-       case paletteRigidity.strong: return "strong";
-       case paletteRigidity.loose: return "loose";
-       case paletteRigidity.none: return "not harmonious. Consider changing rogue colors";
+       case paletteRigidity.strong: return "strongly";
+       case paletteRigidity.loose: return "loosely";
+       case paletteRigidity.none: return "";
      }
    }
+}
+
+class ContrastInfo
+{
+    ContrastInfo({this.lumContrast = luminanceContrast.weak, this.lumVariance = luminanceVariance.inconsistent, this.reason = ''});
+
+    luminanceContrast lumContrast;
+    luminanceVariance lumVariance;
+    String reason;
+
+    String getLuminanceContrastString()
+    {
+      switch (lumContrast){
+        case luminanceContrast.solid: return "solid";
+        case luminanceContrast.weak: return "weak";
+        case luminanceContrast.strong: return "strong";
+      }
+    }
+
+    String getLuminanceVarianceString()
+    {
+      switch (lumVariance){
+        case luminanceVariance.consistent: return "consistent";
+        case luminanceVariance.inconsistent: return "uneven";
+      }
+    }
 }
 
 class PaletteAnalysis extends StatelessWidget {
@@ -121,7 +149,7 @@ class PaletteAnalysis extends StatelessWidget {
       averageHueDeltas[i] = hueDelta;
     }
 
-    print(averageHueDeltas.toString());
+    print("Average Hue Deltas:" + averageHueDeltas.toString());
     return averageHueDeltas;
   }
 
@@ -175,7 +203,7 @@ class PaletteAnalysis extends StatelessWidget {
       }
     }
 
-    print(averageColorHues.toString());
+    print("Average Color Hues: " + averageColorHues.toString());
     
     return averageColorHues;
   }
@@ -209,13 +237,12 @@ class PaletteAnalysis extends StatelessWidget {
     List<double> luminanceDeltas = List.filled(luminances.length-1, 0);
 
     //get the hue variance between each color
-    for(int i = 0; i<luminanceDeltas.length-1; i++)
+    for(int i = 0; i<luminanceDeltas.length; i++)
     {
-      double lumDelta = luminanceDeltas[i+1]-luminanceDeltas[i];
+      double lumDelta = luminances[i+1]-luminances[i];
       luminanceDeltas[i] = lumDelta;
     }
 
-    print(luminanceDeltas.toString());
     return luminanceDeltas;
   }
 
@@ -254,7 +281,7 @@ class PaletteAnalysis extends StatelessWidget {
     }
     //if there is at most 2 blunders in hue variance and the color range is not very large, it is analogous.
     //let the color range be arbitrary.
-    else if (blunders <= 2 && averageHues[averageHues.length-1]-averageHues[0]<90){
+    else if (blunders <= 2 && averageHues[averageHues.length-1]-averageHues[0]<120){
       generatedInfo.type = paletteType.analogous;
 
       //there are two factors in how strong an analogous palette is: how wide the range is, and how consistent the colors are placed.
@@ -284,7 +311,7 @@ class PaletteAnalysis extends StatelessWidget {
     else{
       generatedInfo.type = paletteType.none;
       generatedInfo.rigidity = paletteRigidity.none;
-      generatedInfo.reason = "";
+      generatedInfo.reason = "There might be one or more rogue colors.";
     }
 
     print(generatedInfo.type);
@@ -292,6 +319,54 @@ class PaletteAnalysis extends StatelessWidget {
     print(generatedInfo.reason);
 
     return generatedInfo;
+  }
+
+  int calculateLuminanceBlunders(List<double> luminanceDeltas, double targetDelta)
+  {
+    int blunders = 0;
+    for (double i in luminanceDeltas)
+      {
+        //we will compare the value to the average luminance value and use an arbitrary percentage range.
+        if (i < targetDelta*0.9 || i > targetDelta*1.1){
+          blunders++;
+        }
+      }
+    return blunders;
+  }
+
+  //assume luminances is sorted.
+  ContrastInfo luminanceAnalysis(List<double> luminances, List<double> luminanceDeltas)
+  {
+    ContrastInfo generatedInfo = ContrastInfo();
+    double targetVariation = (luminances.last - luminances.first)/luminances.length;
+    print("Luminance Deltas:" + luminanceDeltas.toString());
+
+      //how far is the contrast for the two colors?
+      //cache these values
+      double difference = luminances.last - luminances.first;
+
+      if (difference > 0.75) //too strong!
+        generatedInfo.lumContrast = luminanceContrast.strong;
+      else if (difference > 0.25) //acceptable
+        generatedInfo.lumContrast = luminanceContrast.solid;
+      else generatedInfo.lumContrast = luminanceContrast.weak; //too weak!
+
+      //we are now going to see how evenly spaced these values are. This is the luminance variance part of our info.
+      //we don't need to do loops for just 2 colors.
+      if (luminanceDeltas.length>1){
+        int blunders = calculateLuminanceBlunders(luminanceDeltas, targetVariation);
+        if (blunders < 1) generatedInfo.lumVariance = luminanceVariance.consistent;
+        else {
+          generatedInfo.lumVariance = luminanceVariance.inconsistent;
+          generatedInfo.reason = "There is at least one outlier in luminance.";
+        }
+      }
+      else{
+        generatedInfo.lumVariance = luminanceVariance.consistent;
+        generatedInfo.reason = "There are only two luminance values.";
+      }
+
+      return generatedInfo;
   }
 
   @override
@@ -310,10 +385,6 @@ class PaletteAnalysis extends StatelessWidget {
         hueValues[i] = HSLColor.fromColor(palette[i]).hue.toInt();
         saturationValues[i] = HSLColor.fromColor(palette[i]).saturation.toDouble();
         lightnessValues[i] = HSLColor.fromColor(palette[i]).lightness.toDouble();
-
-        print((saturationValues[i]*100).toInt().toString());
-        print((lightnessValues[i]*100).toInt().toString());
-        print("      ");
       }
 
     List<List<int>> matrix = generateHueMatrix(hueValues);
@@ -324,7 +395,9 @@ class PaletteAnalysis extends StatelessWidget {
     List<int> hueDeltas = generateHueDeltas(averageColorHues);
     listAllColors(averageColorHues);
 
-    PaletteInfo info = hueAnalysis(matrix, averageColorHues, hueDeltas);
+    PaletteInfo pInfo = hueAnalysis(matrix, averageColorHues, hueDeltas);
+    lightnessValues.sort();
+    ContrastInfo cInfo = luminanceAnalysis(lightnessValues, luminanceDeltas);
 
     return Scaffold(
         body: Center(
@@ -442,9 +515,10 @@ class PaletteAnalysis extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(info.getTypeString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text("This palette is " + info.getRigidityString() + ".", style: TextStyle(fontSize: 20,)),
-                  Text(info.reason.toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
+                  Text("The palette type is " + pInfo.getRigidityString() + " " + pInfo.getTypeString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(pInfo.reason.toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
+                  Text("The luminance contrast is " + cInfo.getLuminanceContrastString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("The distribution for luminance values is " + cInfo.getLuminanceVarianceString() + ". " + cInfo.reason, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                 ],
               )
           ),
@@ -452,7 +526,7 @@ class PaletteAnalysis extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => MyApp()),
+                  builder: (context) => MyHomePage(title: '')),
             );
           }),
           ]
