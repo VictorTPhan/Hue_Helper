@@ -14,6 +14,25 @@ class PaletteInfo //we will put any information about the palette that we analyz
    paletteType type;
    paletteRigidity rigidity;
    String reason;
+
+   String getTypeString()
+   {
+     switch(type){
+       case paletteType.analogous: return "Analogous";
+       case paletteType.complementary: return "Complementary";
+       case paletteType.monochromatic: return "Monochromatic";
+       case paletteType.none: return "None";
+     }
+   }
+
+   String getRigidityString()
+   {
+     switch (rigidity){
+       case paletteRigidity.strong: return "strong";
+       case paletteRigidity.loose: return "loose";
+       case paletteRigidity.none: return "not harmonious. Consider changing rogue colors";
+     }
+   }
 }
 
 class PaletteAnalysis extends StatelessWidget {
@@ -33,6 +52,22 @@ class PaletteAnalysis extends StatelessWidget {
     (val < 257)? colorType.blue:
     (val < 292)? colorType.purple:
     (val < 336)? colorType.magenta: colorType.magenta;
+  }
+
+  String getStringFromColor(colorType type)
+  {
+    switch(type){
+      case (colorType.red): return "red";
+      case (colorType.orange): return "orange";
+      case (colorType.yellow): return "yellow";
+      case (colorType.lime): return "lime";
+      case (colorType.green): return "green";
+      case (colorType.cyan): return "cyan";
+      case (colorType.blue): return "blue";
+      case (colorType.purple): return "purple";
+      case (colorType.magenta): return "magenta";
+      default: return ''; //this should never occur
+    }
   }
 
   bool warrantsNewColor(int hueValue, int lastColorValue)
@@ -120,9 +155,19 @@ class PaletteAnalysis extends StatelessWidget {
 
     for(var i in matrix)
     {
-      if (i.length == 1)
+      if (i.length == 1) //if there is only 1 value then any other calculations are unnecessary
         averageColorHues.add(i[0]);
-      else {
+      //for specifically red, whose values start at the end of the spectrum and end at the start of it, you need to do something special
+      else if (getColorFromHue(i[0]) == colorType.red) {
+        int total = 0;
+        for (int j in i){
+          if (j<=360) j-=360; //is the color value at the end of the spectrum? If so, correct it.
+          total+=j;
+        }
+
+        averageColorHues.add(total~/i.length);
+      }
+      else { //otherwise, get the average value of all the other colors
         int total = 0;
         for(int j in i) total+=j;
 
@@ -158,28 +203,58 @@ class PaletteAnalysis extends StatelessWidget {
     return blunders;
   }
 
-  PaletteInfo hueAnalysis(List<int> averageHues, List<int> hueDeltas)
+  List<double> generateLuminanceDeltas(List<double> luminances)
+  {
+    //represents the distance between average hues in colors
+    List<double> luminanceDeltas = List.filled(luminances.length-1, 0);
+
+    //get the hue variance between each color
+    for(int i = 0; i<luminanceDeltas.length-1; i++)
+    {
+      double lumDelta = luminanceDeltas[i+1]-luminanceDeltas[i];
+      luminanceDeltas[i] = lumDelta;
+    }
+
+    print(luminanceDeltas.toString());
+    return luminanceDeltas;
+  }
+
+  PaletteInfo hueAnalysis(List<List<int>> matrix, List<int> averageHues, List<int> hueDeltas)
   {
     PaletteInfo generatedInfo = PaletteInfo();
     double totalHueDeltas = calculateTotalHueDeltas(hueDeltas);
     int blunders = analogousBlunderAnalysis(totalHueDeltas, hueDeltas);
 
+    //if it's only one color, it's monochromatic
+    if (matrix.length == 1){
+      generatedInfo.type = paletteType.monochromatic;
+
+      generatedInfo.rigidity = paletteRigidity.strong;
+      generatedInfo.reason = "All colors belong to the same general hue.";
+    }
     //if the hue delta is within 40 of 180, then it is a complementary palette
-    if (hueDeltas.length == 1 && hueDeltas[0] > 140 && hueDeltas[0] < 220) {
+    else if (hueDeltas.length == 1 && hueDeltas[0] > 140 && hueDeltas[0] < 220) {
       generatedInfo.type = paletteType.complementary;
 
       //if within 20 of 180, it is a strong match
       if (hueDeltas[0] > 160 && hueDeltas[0] < 200) {
         generatedInfo.rigidity = paletteRigidity.strong;
-        generatedInfo.reason = "Color is a close complement.";
+        generatedInfo.reason = "The opposing color is a close complement.";
       }
       else {
         generatedInfo.rigidity = paletteRigidity.loose;
-        generatedInfo.reason = "Color is not an exact complement.";
+        generatedInfo.reason = "The opposing color is not an exact complement.";
+
+        //what should the actual complement color be?
+        int oppositeHue = averageHues[0] + 180;
+        if (oppositeHue > 360) oppositeHue-=360;
+
+        generatedInfo.reason += " Consider shifting those hues to a more " + getStringFromColor(getColorFromHue(oppositeHue)) + " hue.";
       }
     }
-    //if there is at most 2 blunders in hue variance, it is analogous.
-    else if (blunders <= 2){
+    //if there is at most 2 blunders in hue variance and the color range is not very large, it is analogous.
+    //let the color range be arbitrary.
+    else if (blunders <= 2 && averageHues[averageHues.length-1]-averageHues[0]<90){
       generatedInfo.type = paletteType.analogous;
 
       //there are two factors in how strong an analogous palette is: how wide the range is, and how consistent the colors are placed.
@@ -205,6 +280,11 @@ class PaletteAnalysis extends StatelessWidget {
         generatedInfo.reason +=
         " The range of hues is well-constrained.";
       }
+    }
+    else{
+      generatedInfo.type = paletteType.none;
+      generatedInfo.rigidity = paletteRigidity.none;
+      generatedInfo.reason = "";
     }
 
     print(generatedInfo.type);
@@ -239,21 +319,22 @@ class PaletteAnalysis extends StatelessWidget {
     List<List<int>> matrix = generateHueMatrix(hueValues);
     List<int> averageColorHues = getAverageColors(matrix);
     List<colorType> valuesAsColors = huesAsColorTypes(matrix);
+    List<double> luminanceDeltas = generateLuminanceDeltas(lightnessValues);
     
     List<int> hueDeltas = generateHueDeltas(averageColorHues);
     listAllColors(averageColorHues);
 
-    PaletteInfo info = hueAnalysis(averageColorHues, hueDeltas);
+    PaletteInfo info = hueAnalysis(matrix, averageColorHues, hueDeltas);
 
     return Scaffold(
         body: Center(
         child: Column(
         children: [
           createTopText("let's see..."),
-          Expanded( //The part that shows the palette
-            flex: 20,
+          Expanded(
+            flex: 10,
             child: Container(
-              margin: EdgeInsets.only(left: 3.0, right: 3.0),
+              margin: EdgeInsets.only(left: 3.0, right: 3.0, top:5.0),
               child: Row(
                 children: [
                   for (var i in palette)
@@ -268,9 +349,9 @@ class PaletteAnalysis extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          Expanded( //the part that shows the hue variation
-            flex: 10,
+          ), //The part that shows the palette
+          Expanded(
+            flex: 5,
             child: Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Container(
@@ -299,9 +380,9 @@ class PaletteAnalysis extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          Expanded( //the part that shows the saturation variation
-            flex: 10,
+          ), //the part that shows the hue variation
+          Expanded(
+            flex: 5,
             child: Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Container(
@@ -326,9 +407,9 @@ class PaletteAnalysis extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          Expanded( //the part that shows the luminance variation
-            flex: 10,
+          ), //the part that shows the saturation variation
+          Expanded(
+            flex: 5,
             child: Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Container(
@@ -355,16 +436,15 @@ class PaletteAnalysis extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          ), //the part that shows the luminance variation
           Expanded(
-              flex: 40,
+              flex: 55,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  //palette type
-                  //color distribution
-                  //lightness contrast
-                  //saturation contrast
-                  //descriptors
+                  Text(info.getTypeString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("This palette is " + info.getRigidityString() + ".", style: TextStyle(fontSize: 20,)),
+                  Text(info.reason.toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                 ],
               )
           ),
