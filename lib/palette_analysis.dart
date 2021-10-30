@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hue_helper/palette_type.dart';
 import 'basic_widgets.dart';
 import 'main.dart';
 
-enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta}
+enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta, black, gray, white}
 enum paletteType {monochromatic, complementary, analogous, none}
 enum paletteRigidity {strong, loose, none} //how much does the palette fit into one of the 3 types?
 enum luminanceContrast {strong, solid, weak}
@@ -126,17 +125,31 @@ class PaletteAnalysis extends StatelessWidget {
     }
   }
 
-  bool warrantsNewColor(int hueValue, int lastColorValue)
+  //assume the color going in has no saturation
+  colorType getMonotoneColor(HSLColor c)
   {
+    if (c.lightness == 0) return colorType.black;
+    else if (c.lightness == 1) return colorType.white;
+    else return colorType.gray;
+  }
+
+  //assume the color after lastColor is indeed monotone
+  bool wasLastColorMonochromatic(double saturationOfLastColor)
+  {
+    return (saturationOfLastColor != 0)? false: true;
+  }
+
+  bool warrantsNewColor(int hueValue, double saturationValue, int lastColorValue)
+  {
+    if (saturationValue == 0) return false;
+
     //what color was the last value?, and does this value fall within that range?
     return (getColorFromHue(lastColorValue) == getColorFromHue(hueValue))? false: true;
   }
 
-  List<List<int>> generateHueMatrix(List<int> values)
+  //assume all of these are sorted according to hue and have the same length
+  List<List<int>> generateHueMatrix(List<int> hues, List<double> saturations, List<double> lightness)
   {
-    //sort values from lowest to highest
-    values.sort();
-
     //var colorMatrix = new List.generate(amountOfColors, (_) => new List.filled(6, 0, growable: false));
     var colorMatrix = new List.generate(1, (_) => new List.filled(0, 0, growable: true), growable: true);
 
@@ -144,22 +157,24 @@ class PaletteAnalysis extends StatelessWidget {
     int currentColorIndex = 0;
 
     //start off by adding first value to [0][0]
-    colorMatrix[0].add(values[0]);
+    colorMatrix[0].add(hues[0]);
 
-    for(int i = 1; i<values.length; i++)
+    for(int i = 1; i<hues.length; i++)
     {
-      //if the next value goes over a certain threshold
-      if (warrantsNewColor(values[i], values[i-1]))
-      {
-        currentColorIndex++;
+      //is this color different from the last one, and is it a color?
+        if (warrantsNewColor(hues[i], saturations[i], hues[i-1]))
+        {
+          currentColorIndex++;
 
-        //add a new list (this represents a new color)
-        colorMatrix.add(new List.filled(0, 0, growable: true));
-      }
+          //add a new list (this represents a new color)
+          colorMatrix.add(new List.filled(0, 0, growable: true));
 
-      //add the value to the current color
-      colorMatrix[currentColorIndex].add(values[i]);
+          //add the value to the current color
+          colorMatrix[currentColorIndex].add(hues[i]);
+        }
     }
+
+    if (colorMatrix[0][0] == 0 && saturations[0] == 0) colorMatrix.removeAt(0);
 
     print("colorMatrix: " + colorMatrix.toString());
     return colorMatrix;
@@ -443,36 +458,94 @@ class PaletteAnalysis extends StatelessWidget {
     return generatedInfo;
   }
 
+  //uses selection sort
+  //assume the lengths of all parameters are the same.
+  List<int> sortAccordingtoHue(List<int> hue, List<double> saturation, List<double> luminance){
+    for (int currentIndexToSwitch = 0; currentIndexToSwitch < hue.length; currentIndexToSwitch++){
+      //find the smallest element in the array
+      int indexOfMin = currentIndexToSwitch;
+      int minimum = hue[indexOfMin];
+      for (int i = indexOfMin; i<hue.length; i++){
+        if (hue[i] <= minimum) {
+          indexOfMin = i;
+          minimum = hue[i];
+        }
+      }
+
+      //exchange the smallest element with the one at the first position.
+      int temp1 = hue[indexOfMin];
+      hue[indexOfMin] = hue[currentIndexToSwitch];
+      hue[currentIndexToSwitch] = temp1;
+
+      //do the same for the other lists.
+      double temp2 = saturation[indexOfMin];
+      saturation[indexOfMin] = saturation[currentIndexToSwitch];
+      saturation[currentIndexToSwitch] = temp2;
+
+      //for some reason black is labelled as very saturated (?) so we correct that.
+      if (saturation[currentIndexToSwitch] == 1 && luminance[currentIndexToSwitch] == 0)
+        saturation[currentIndexToSwitch] = 0;
+
+      double temp3 = luminance[indexOfMin];
+      luminance[indexOfMin] = luminance[currentIndexToSwitch];
+      luminance[currentIndexToSwitch] = temp3;
+    }
+
+    return hue;
+  }
+
+  //assume all lists have the same length
+  List<int> removeMonochromeColors(List<int> hue, List<double> saturation) {
+
+    List<double> tempSaturation = List.from(saturation);
+
+    for (int i = 0; i<hue.length; i++){
+      if (tempSaturation[i] == 0) {
+        hue.removeAt(i);
+        tempSaturation.removeAt(i);
+        i--;
+      }
+    }
+    return hue;
+  }
+
   @override
   Widget build(BuildContext context) {
 
     //remove any unnecessary colors (see comment on paletteSize)
     palette = palette.sublist(0, paletteSize);
 
-    List<int> hueValues = List.filled(palette.length, 0);
-    List<double> saturationValues = List.filled(palette.length, 0);
-    List<double> lightnessValues = List.filled(palette.length, 0);
+    List<int> hueValues = List.filled(0, 0, growable: true);
+    List<double> saturationValues = List.filled(0, 0, growable: true);
+    List<double> lightnessValues = List.filled(0, 0, growable: true);
 
     //save all values into hueValues
-    for(int i = 0; i<palette.length; i++)
-      {
-        hueValues[i] = HSLColor.fromColor(palette[i]).hue.toInt();
-        saturationValues[i] = HSLColor.fromColor(palette[i]).saturation.toDouble();
-        lightnessValues[i] = HSLColor.fromColor(palette[i]).lightness.toDouble();
-      }
+    for (Color c in palette){
+      hueValues.add(HSLColor.fromColor(c).hue.toInt());
+      saturationValues.add(HSLColor.fromColor(c).saturation.toDouble());
+      lightnessValues.add(HSLColor.fromColor(c).lightness.toDouble());
+    }
 
-    List<List<int>> matrix = generateHueMatrix(hueValues);
+    sortAccordingtoHue(hueValues, saturationValues, lightnessValues);
+
+    print("Hues " + hueValues.toString());
+    print("Saturations " + saturationValues.toString());
+    print("Luminances " + lightnessValues.toString());
+
+    List<List<int>> matrix = generateHueMatrix(hueValues, saturationValues, lightnessValues);
     List<int> averageColorHues = getAverageColors(matrix);
-    List<colorType> valuesAsColors = huesAsColorTypes(matrix);
     List<double> luminanceDeltas = generateLuminanceDeltas(lightnessValues);
     List<double> saturationDeltas = generateSaturationDeltas(saturationValues);
     
     List<int> hueDeltas = generateHueDeltas(averageColorHues);
 
+    removeMonochromeColors(hueValues, saturationValues);
+    hueValues.sort();
     PaletteInfo pInfo = hueAnalysis(matrix, averageColorHues, hueDeltas);
+
     lightnessValues.sort();
-    ContrastInfo cInfo = luminanceAnalysis(lightnessValues, luminanceDeltas);
     saturationValues.sort();
+    ContrastInfo cInfo = luminanceAnalysis(lightnessValues, luminanceDeltas);
     SaturationInfo sInfo = saturationAnalysis(saturationValues, saturationDeltas);
 
     return Scaffold(
