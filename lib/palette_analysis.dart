@@ -8,6 +8,8 @@ enum paletteType {monochromatic, complementary, analogous, none}
 enum paletteRigidity {strong, loose, none} //how much does the palette fit into one of the 3 types?
 enum luminanceContrast {strong, solid, weak}
 enum luminanceVariance {consistent, inconsistent} //how evenly spaced are luminance values?
+enum saturationContrast {strong, solid, weak}
+enum saturationVariance {consistent, inconsistent} //how evenly spaced are the saturation values?
 
 class PaletteInfo //we will put any information about the palette that we analyze here
 {
@@ -61,6 +63,32 @@ class ContrastInfo
         case luminanceVariance.inconsistent: return "uneven";
       }
     }
+}
+
+class SaturationInfo
+{
+  SaturationInfo({this.satContrast = luminanceContrast.weak, this.satVariance = luminanceVariance.inconsistent, this.reason = ''});
+
+  luminanceContrast satContrast;
+  luminanceVariance satVariance;
+  String reason;
+
+  String getSaturationContrastString()
+  {
+    switch (satContrast){
+      case luminanceContrast.solid: return "solid";
+      case luminanceContrast.weak: return "weak";
+      case luminanceContrast.strong: return "strong";
+    }
+  }
+
+  String getSaturationVarianceString()
+  {
+    switch (satVariance){
+      case luminanceVariance.consistent: return "consistent";
+      case luminanceVariance.inconsistent: return "uneven";
+    }
+  }
 }
 
 class PaletteAnalysis extends StatelessWidget {
@@ -246,6 +274,21 @@ class PaletteAnalysis extends StatelessWidget {
     return luminanceDeltas;
   }
 
+  List<double> generateSaturationDeltas(List<double> saturations)
+  {
+    //represents the distance between average hues in colors
+    List<double> saturationDeltas = List.filled(saturations.length-1, 0);
+
+    //get the hue variance between each color
+    for(int i = 0; i<saturationDeltas.length; i++)
+    {
+      double lumDelta = saturations[i+1]-saturations[i];
+      saturationDeltas[i] = lumDelta;
+    }
+
+    return saturationDeltas;
+  }
+
   PaletteInfo hueAnalysis(List<List<int>> matrix, List<int> averageHues, List<int> hueDeltas)
   {
     PaletteInfo generatedInfo = PaletteInfo();
@@ -314,10 +357,6 @@ class PaletteAnalysis extends StatelessWidget {
       generatedInfo.reason = "There might be one or more rogue colors.";
     }
 
-    print(generatedInfo.type);
-    print(generatedInfo.rigidity);
-    print(generatedInfo.reason);
-
     return generatedInfo;
   }
 
@@ -369,6 +408,41 @@ class PaletteAnalysis extends StatelessWidget {
       return generatedInfo;
   }
 
+  //assume luminances is sorted.
+  SaturationInfo saturationAnalysis(List<double> saturations, List<double> saturationDeltas)
+  {
+    SaturationInfo generatedInfo = SaturationInfo();
+    double targetVariation = (saturations.last - saturations.first)/saturations.length;
+    print("Saturation Deltas:" + saturationDeltas.toString());
+
+    //how far is the contrast for the two colors?
+    //cache these values
+    double difference = saturations.last - saturations.first;
+
+    if (difference > 0.75) //too strong!
+      generatedInfo.satContrast = luminanceContrast.strong;
+    else if (difference > 0.25) //acceptable
+      generatedInfo.satContrast = luminanceContrast.solid;
+    else generatedInfo.satContrast = luminanceContrast.weak; //too weak!
+
+    //we are now going to see how evenly spaced these values are. This is the luminance variance part of our info.
+    //we don't need to do loops for just 2 colors.
+    if (saturationDeltas.length>1){
+      int blunders = calculateLuminanceBlunders(saturationDeltas, targetVariation);
+      if (blunders < 1) generatedInfo.satVariance = luminanceVariance.consistent;
+      else {
+        generatedInfo.satVariance = luminanceVariance.inconsistent;
+        generatedInfo.reason = "There is at least one outlier in saturation.";
+      }
+    }
+    else{
+      generatedInfo.satVariance = luminanceVariance.consistent;
+      generatedInfo.reason = "There are only two saturation values.";
+    }
+
+    return generatedInfo;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -391,13 +465,15 @@ class PaletteAnalysis extends StatelessWidget {
     List<int> averageColorHues = getAverageColors(matrix);
     List<colorType> valuesAsColors = huesAsColorTypes(matrix);
     List<double> luminanceDeltas = generateLuminanceDeltas(lightnessValues);
+    List<double> saturationDeltas = generateSaturationDeltas(saturationValues);
     
     List<int> hueDeltas = generateHueDeltas(averageColorHues);
-    listAllColors(averageColorHues);
 
     PaletteInfo pInfo = hueAnalysis(matrix, averageColorHues, hueDeltas);
     lightnessValues.sort();
     ContrastInfo cInfo = luminanceAnalysis(lightnessValues, luminanceDeltas);
+    saturationValues.sort();
+    SaturationInfo sInfo = saturationAnalysis(saturationValues, saturationDeltas);
 
     return Scaffold(
         body: Center(
@@ -519,6 +595,8 @@ class PaletteAnalysis extends StatelessWidget {
                   Text(pInfo.reason.toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                   Text("The luminance contrast is " + cInfo.getLuminanceContrastString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   Text("The distribution for luminance values is " + cInfo.getLuminanceVarianceString() + ". " + cInfo.reason, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
+                  Text("The saturation contrast is " + sInfo.getSaturationContrastString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("The distribution for saturation values is " + sInfo.getSaturationVarianceString() + ". " + sInfo.reason, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                 ],
               )
           ),
