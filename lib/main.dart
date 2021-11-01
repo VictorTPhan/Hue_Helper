@@ -146,13 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               )),
-          createBottomRow(Icons.settings, () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Settings()),
-            );
-          }),
+          Expanded(
+            flex: 10,
+            child: Container(),
+          )
         ],
       ),
     );

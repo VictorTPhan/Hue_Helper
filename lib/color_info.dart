@@ -30,7 +30,7 @@ class ColorInfo extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                createTopText(colorData.name),
+                createTopTextWithColor(colorData.name, colorData.color),
                 Expanded(
                     flex: 80,
                     child: Container(

@@ -12,21 +12,26 @@ class ThemeColors {
 
 Widget createTopText(String topText)
 {
-    return Expanded(
-        flex: 10,
-        child: Container(
-            color: ThemeColors.primaryColor,
-            alignment: Alignment.center,
-            child: Text(
-                topText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                ),
-            ),
-        )
-    );
+    return createTopTextWithColor(topText, ThemeColors.primaryColor);
+}
+
+Widget createTopTextWithColor(String topText, Color topColor)
+{
+  return Expanded(
+      flex: 10,
+      child: Container(
+        color: topColor,
+        alignment: Alignment.center,
+        child: Text(
+          topText,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      )
+  );
 }
 
 //nextScreen is what would typically go in onPressed

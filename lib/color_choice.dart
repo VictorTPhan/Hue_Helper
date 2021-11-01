@@ -12,70 +12,68 @@ class ColorChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    //all information about colors taken from verywellmind.com
-
     colorList.add(
-        ColorData(Color(0xFFFF0000),
+        ColorData(Color(0xFFFF0E0E),
             'red',
         colorType.primary,
-        'Red has had a long symbolic history throughout nearly all cultures, and is the most common color used in palettes.',
+        'Red has had a long symbolic history throughout nearly all cultures, as a representation of boldness and fiery resolve, and is the most common color used in palettes.',
         ['passion','anger','fire', 'courageousness'],
         337, 14));
     colorList.add(
-        ColorData(Color(0xFFFF7700),
+        ColorData(Color(0xFFFF7900),
             'orange',
             colorType.secondary,
-            'Orange is one of the boldest warm colors, and is often used in advertising and public safety equipment; for example, traffic cones, safety vests, and hard hats.',
-            ['boldness','drawing attention','energy'],
+            "Orange contains many of the qualities of its neighbors, but it is unique in its boldness. It's why orange is commonly seen in safety equipment or cautionary signs.",
+            ['boldness','attentiveness','energy', 'earthiness (when darkened)', 'autumn'],
         15, 41));
     colorList.add(
-        ColorData(Color(0xFFFFE900),
+        ColorData(Color(0xFFFFD900),
             'yellow',
             colorType.primary,
-            'Yellow is one of the brightest of the warm colors. Much like orange, it is often used in both advertising and public safety signs. Red and yellow are very common color combinations for advertisements, and yellow is the go-to color for most road signs.',
-            ['brightness', 'happiness', 'vibrancy', 'youth'],
+            'Yellow is one of the lightest of hues. It is commonly used in conjunction with red in advertisements (think fast-food), and also in many road-signs.',
+            ['brightness', 'happiness', 'vibrancy', 'youth', 'creativity'],
         42, 71));
     colorList.add(
         ColorData(Color(0xFF90FF00),
             'lime',
-            colorType.primary,
+            colorType.tertiary,
             'Alongside normal green, lime is the de-facto color for nature. In many respects its associations are similar to that of yellow.',
             ['nature', 'harmony', 'wealth', 'restlessness'],
         72, 99));
     colorList.add(
         ColorData(Color(0xFF21FF00),
             'green',
-            colorType.primary,
-            'Green is the most common color used in relation to nature. Throughout many years of evolution, humans have best learned to differentiate hues of green.',
-            ['nature', 'tranquility', 'environmental awareness', 'good health'],
+            colorType.secondary,
+            'Green is the most common color used in relation to nature (for obvious reasons). Such is why there are more perceived shades of green than other colors.',
+            ['nature', 'success', 'tranquility', 'envy', 'good health'],
         100, 151));
     colorList.add(
         ColorData(Color(0xFF00F6FF),
             'cyan',
-            colorType.primary,
+            colorType.secondary,
             'Cyan is one of the most commonly used colors for apps and branding. Check the apps on your phone. How many apps implement cyan or a variant of cyan in some fashion?',
             ['focus', 'concentration', 'calming', 'analytics'],
         152, 207));
     colorList.add(
-        ColorData(Color(0xFF0000FF),
+        ColorData(Color(0xFF3553E8),
             'blue',
             colorType.primary,
-            'Blue is a color with some of the most varied associations. It is also one of the most commonly selected colors. Blue is one the coldest colors.',
-            ['sadness', 'coldness', 'serenity', 'the ocean', 'productivity'],
+            "Next to green, blue is perhaps one of the most common colors, representing generally anything related to water. Blue is considered the coldest color in the spectrum.",
+            ['sadness', 'coldness', 'calmness', 'water (ocean or ice)', 'productivity'],
         208, 257));
     colorList.add(
         ColorData(Color(0xFFA100FF),
             'purple',
-            colorType.primary,
-            'Historically a rare color due to difficulties in procuring purple dyes, purple has long been used only by kings and queens as part of their royal fashion.',
-            ['wealth', 'royalty', 'mystery'],
+            colorType.secondary,
+            'Historically a rare color due to difficulties in procuring purple dyes, purple has long been used only by kings and queens as part of their royal fashion. Everything associated with royality similarly applies to purple.',
+            ['wealth', 'royalty', 'mystery', 'deviance', 'corruption', 'poison'],
         258, 292));
     colorList.add(
         ColorData(Color(0xFFFF01B1),
             'magenta',
-            colorType.secondary,
-            'Mangeta is a semi-common color in nature. When toned down, it is a very relaxing color. On the same token, when highly saturated, magenta can be both striking and extremely bold.',
-            ['energy', 'vibrancy', 'youth', 'obnoxious'],
+            colorType.tertiary,
+            'Magenta is a semi-common color in nature, typically found in plants. When toned down, it is a very relaxing color. On the same token, when highly saturated, magenta can be both striking and extremely bold.',
+            ['energy', 'prettiness', 'youth', 'obnoxiousness'],
             293, 336));
 
     return Scaffold(

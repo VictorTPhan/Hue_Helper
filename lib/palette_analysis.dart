@@ -9,6 +9,8 @@ enum luminanceContrast {strong, solid, weak}
 enum luminanceVariance {consistent, inconsistent} //how evenly spaced are luminance values?
 enum saturationContrast {strong, solid, weak}
 enum saturationVariance {consistent, inconsistent} //how evenly spaced are the saturation values?
+enum lumType{normal, dark, light}
+enum satType{deSat, normal, sat}
 
 class PaletteInfo //we will put any information about the palette that we analyze here
 {
@@ -24,7 +26,7 @@ class PaletteInfo //we will put any information about the palette that we analyz
        case paletteType.analogous: return "analogous";
        case paletteType.complementary: return "complementary";
        case paletteType.monochromatic: return "monochromatic";
-       case paletteType.none: return "not harmonious";
+       case paletteType.none: return "non-conforming";
      }
    }
 
@@ -88,6 +90,16 @@ class SaturationInfo
       case luminanceVariance.inconsistent: return "uneven";
     }
   }
+}
+
+class ColorTypeInfo
+{
+  ColorTypeInfo({this.col = Colors.red, this.type = colorType.red, this.sat = satType.normal, this.lum = lumType.normal});
+
+  colorType type;
+  satType sat;
+  lumType lum;
+  Color col;
 }
 
 class PaletteAnalysis extends StatelessWidget {
@@ -308,6 +320,7 @@ class PaletteAnalysis extends StatelessWidget {
   {
     PaletteInfo generatedInfo = PaletteInfo();
     double totalHueDeltas = calculateTotalHueDeltas(hueDeltas);
+    int hueRange = 0;
     int blunders = analogousBlunderAnalysis(totalHueDeltas, hueDeltas);
 
     //if it's only one color, it's monochromatic
@@ -339,7 +352,7 @@ class PaletteAnalysis extends StatelessWidget {
     }
     //if there is at most 2 blunders in hue variance and the color range is not very large, it is analogous.
     //let the color range be arbitrary.
-    else if (blunders <= 2 && averageHues[averageHues.length-1]-averageHues[0]<120){
+    else if (blunders <= 2 && averageHues.last-averageHues.first<150){
       generatedInfo.type = paletteType.analogous;
 
       //there are two factors in how strong an analogous palette is: how wide the range is, and how consistent the colors are placed.
@@ -347,7 +360,7 @@ class PaletteAnalysis extends StatelessWidget {
       if (blunders <= 1) { //how consistent are the colors placed?
         generatedInfo.rigidity = paletteRigidity.strong;
         generatedInfo.reason =
-        "There is at most one color with an inconsistent hue variation.";
+        "The distribution is generally even.";
       }
       else {
         generatedInfo.rigidity = paletteRigidity.loose;
@@ -355,10 +368,10 @@ class PaletteAnalysis extends StatelessWidget {
         "There is at least one color with an inconsistent hue variation.";
       }
 
-      if (totalHueDeltas > 200){ //is the range too wide?
+      if (averageHues.last-averageHues.first>100){ //is the range too wide?
         generatedInfo.rigidity = paletteRigidity.loose;
         generatedInfo.reason +=
-        " The range of hues is too wide.";
+        " The range of hues is rather wide.";
       }
       else{
         generatedInfo.rigidity = paletteRigidity.strong;
@@ -412,7 +425,7 @@ class PaletteAnalysis extends StatelessWidget {
         if (blunders < 1) generatedInfo.lumVariance = luminanceVariance.consistent;
         else {
           generatedInfo.lumVariance = luminanceVariance.inconsistent;
-          generatedInfo.reason = "There is at least one outlier in luminance.";
+          generatedInfo.reason = "";
         }
       }
       else{
@@ -447,7 +460,7 @@ class PaletteAnalysis extends StatelessWidget {
       if (blunders < 1) generatedInfo.satVariance = luminanceVariance.consistent;
       else {
         generatedInfo.satVariance = luminanceVariance.inconsistent;
-        generatedInfo.reason = "There is at least one outlier in saturation.";
+        generatedInfo.reason = "";
       }
     }
     else{
@@ -490,6 +503,7 @@ class PaletteAnalysis extends StatelessWidget {
     return hue;
   }
 
+  //assume all lists have the same length
   void correctBlackColors(List<int> hues, List<double> saturations, List<double> luminances){
     for (int i = 0; i<hues.length; i++){
       if (hues[i] == 0 && saturations[i] == 1.0 && luminances[i] == 0)
@@ -510,6 +524,48 @@ class PaletteAnalysis extends StatelessWidget {
       }
     }
     return hue;
+  }
+
+  satType getSaturationFromValue(double sat)
+  {
+    if (sat > 0.80) return satType.sat;
+    else if (sat > 0.20) return satType.normal;
+    else return satType.deSat;
+  }
+
+  String getStringFromSaturation(satType type)
+  {
+    if (type == satType.sat) return "bright ";
+    else if (type == satType.normal) return "";
+    else return "muted ";
+  }
+
+  String getStringFromLuminance(lumType type)
+  {
+    if (type == lumType.light) return "light ";
+    else if (type == lumType.normal) return "";
+    else return "dark ";
+  }
+
+  lumType getLuminanceFromValue(double lum)
+  {
+    if (lum > 0.80) return lumType.light;
+    else if (lum > 0.30) return lumType.normal;
+    else return lumType.dark;
+  }
+
+  List<ColorTypeInfo> getColorTypeInfo(List<int> hues, List<double> saturations, List<double> luminances)
+  {
+    List<ColorTypeInfo> allColors = List.filled(0, ColorTypeInfo(), growable: true);
+
+    for(int i = 0; i<hues.length; i++){
+      allColors.add(ColorTypeInfo(col: HSLColor.fromAHSL(1, hues[i].toDouble(), saturations[i], luminances[i]).toColor(),
+                                  type: getColorFromHue(hues[i]),
+                                  sat: getSaturationFromValue(saturations[i]),
+                                  lum: getLuminanceFromValue(luminances[i])));
+    }
+
+    return allColors;
   }
 
   @override
@@ -542,6 +598,7 @@ class PaletteAnalysis extends StatelessWidget {
     List<double> saturationDeltas = generateSaturationDeltas(saturationValues);
     
     List<int> hueDeltas = generateHueDeltas(averageColorHues);
+    List<ColorTypeInfo> colorInfos = getColorTypeInfo(hueValues, saturationValues, lightnessValues);
 
     removeMonochromeColors(hueValues, saturationValues);
     print("Hues without monochrome colors " + hueValues.toString());
@@ -665,20 +722,40 @@ class PaletteAnalysis extends StatelessWidget {
             ),
           ), //the part that shows the luminance variation
           Expanded(
-              flex: 55,
+              flex: 25,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("The palette type is " + pInfo.getRigidityString() + " " + pInfo.getTypeString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   Text(pInfo.reason.toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                   Text("The luminance contrast is " + cInfo.getLuminanceContrastString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text("The distribution for luminance values is " + cInfo.getLuminanceVarianceString() + ". " + cInfo.reason, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
+                  Text("The distribution is " + cInfo.getLuminanceVarianceString() + ". " + cInfo.reason, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                   Text("The saturation contrast is " + sInfo.getSaturationContrastString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text("The distribution for saturation values is " + sInfo.getSaturationVarianceString() + ". " + sInfo.reason, textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
+                  Text("The distribution is " + sInfo.getSaturationVarianceString() + '. ', textAlign: TextAlign.center, style: TextStyle(fontSize: 20,)),
                 ],
               )
           ),
-          createBottomRow(Icons.settings, () {
+          Expanded(
+            flex: 25,
+            child: Column(
+              children: [
+                for (var i in colorInfos)
+                  Row(
+                    children: [
+                      Icon(Icons.circle, color: i.col, size: 30),
+                      Text(getStringFromLuminance(i.lum) +
+                          getStringFromSaturation(i.sat) +
+                          getStringFromColor(i.type),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),)
+                    ],
+                  )
+              ],
+            ),
+          ),
+          createBottomRow(Icons.home, () {
             Navigator.push(
               context,
               MaterialPageRoute(
