@@ -482,16 +482,19 @@ class PaletteAnalysis extends StatelessWidget {
       saturation[indexOfMin] = saturation[currentIndexToSwitch];
       saturation[currentIndexToSwitch] = temp2;
 
-      //for some reason black is labelled as very saturated (?) so we correct that.
-      if (saturation[currentIndexToSwitch] == 1 && luminance[currentIndexToSwitch] == 0)
-        saturation[currentIndexToSwitch] = 0;
-
       double temp3 = luminance[indexOfMin];
       luminance[indexOfMin] = luminance[currentIndexToSwitch];
       luminance[currentIndexToSwitch] = temp3;
     }
 
     return hue;
+  }
+
+  void correctBlackColors(List<int> hues, List<double> saturations, List<double> luminances){
+    for (int i = 0; i<hues.length; i++){
+      if (hues[i] == 0 && saturations[i] == 1.0 && luminances[i] == 0)
+        saturations[i] = 0.0;
+    }
   }
 
   //assume all lists have the same length
@@ -527,6 +530,7 @@ class PaletteAnalysis extends StatelessWidget {
     }
 
     sortAccordingtoHue(hueValues, saturationValues, lightnessValues);
+    correctBlackColors(hueValues, saturationValues, lightnessValues);
 
     print("Hues " + hueValues.toString());
     print("Saturations " + saturationValues.toString());
@@ -540,6 +544,7 @@ class PaletteAnalysis extends StatelessWidget {
     List<int> hueDeltas = generateHueDeltas(averageColorHues);
 
     removeMonochromeColors(hueValues, saturationValues);
+    print("Hues without monochrome colors " + hueValues.toString());
     hueValues.sort();
     PaletteInfo pInfo = hueAnalysis(matrix, averageColorHues, hueDeltas);
 
