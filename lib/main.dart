@@ -79,6 +79,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //depending on palette type, the range for hue variation will be different
     double hueLow, hueHigh;
+    double satLow = 40, satHigh = 80;
+    double lumLow = 20, lumHigh = 90;
 
     if (generatedType == PaletteOrganization.analogous) {hueLow = 90; hueHigh = 180;}
     else {hueLow = 0; hueHigh = 90;}
@@ -87,8 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
     double hueVariance, saturationVariance, luminanceVariance;
 
     hueVariance = hueLow+ Random().nextInt((hueHigh-hueLow).toInt());
-    saturationVariance = Random().nextDouble();
-    luminanceVariance = Random().nextDouble();
+    saturationVariance = (satLow+ Random().nextInt((satHigh-satLow).toInt()))/100;
+    luminanceVariance = (lumLow+ Random().nextInt((lumHigh-lumLow).toInt()))/100;
 
     generatedPalette = calculateOtherColors(generatedType, generatedPalette, generatedPalette.length, hueVariance, saturationVariance, luminanceVariance);
 

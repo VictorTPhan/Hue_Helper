@@ -104,6 +104,11 @@ Widget createSlider(double adjustableVariable, String title, String description,
 //assume palette[0] = adjustedColor
 List<HSLColor> calculateOtherColors(PaletteOrganization type, List<HSLColor> palette, int _paletteSize, double _hueVarianceValue, double _saturationVarianceValue, double _luminanceVarianceValue)
 {
+  //correct any colors that are too high (if for whatever reason they are)
+  if (_hueVarianceValue > 360) _hueVarianceValue-=360;
+  if (_saturationVarianceValue > 1) _saturationVarianceValue-=1;
+  if (_luminanceVarianceValue > 1) _luminanceVarianceValue-=1;
+
   HSLColor referenceColor = palette[0];
   double hueVariance = _hueVarianceValue/_paletteSize;
   double saturationVariance = _saturationVarianceValue/_paletteSize;
@@ -178,7 +183,7 @@ List<HSLColor> calculateOtherColors(PaletteOrganization type, List<HSLColor> pal
 
       for (int i = halfWay; i< _paletteSize; i++)
       {
-        palette[i] = referenceColor.withLightness(referenceColor.lightness + posLumRange * (i-2)/(_paletteSize-halfWay));
+        palette[i] = referenceColor.withLightness((referenceColor.lightness + posLumRange * (i-2)/(_paletteSize-halfWay)).clamp(0, 1));
 
         double hueDelta = (oppositeHue - hueVariance * (i-halfWay));
         if (hueDelta < 0) hueDelta+=360;
