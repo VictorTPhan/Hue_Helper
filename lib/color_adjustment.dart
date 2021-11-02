@@ -18,6 +18,8 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
 
   //based on mathematics from:
   //https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
+  //generates a hue value from 0 to 360.
+  //int R, G, B - the red, blue, and green channels, respectively. All range from 0 to 255.
   int _redGreenBluetoHue(int R,G,B)
   {
     //convert RBG values to range 0-1

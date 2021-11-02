@@ -44,7 +44,7 @@ class _PaletteInputState extends State<PaletteInput> {
               children: [
                 createTopText("input your palette"),
                 Expanded(
-                    flex: 20,
+                    flex: 15,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -89,13 +89,13 @@ class _PaletteInputState extends State<PaletteInput> {
                       for (int i = 0; i<_paletteSize; i++)
                         Expanded(
                           child: Container(
-                            margin: EdgeInsets.all(4.0),
+                            margin: EdgeInsets.all(8.0),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: palette[i],
                                   shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
                                   ),),
-                                child: Text("hi!"),
+                                child: Container(),
                                 onPressed: (){
                                   setState(() {
                                     selectColor(i);
@@ -109,7 +109,7 @@ class _PaletteInputState extends State<PaletteInput> {
                   ),
                 ),
                 Expanded(
-                  flex: 50,
+                  flex: 45,
                   child: ColorPicker(
                     pickerColor: palette[currentIndex],
                     onColorChanged: changeColor,

@@ -10,11 +10,16 @@ class ThemeColors {
     static Color backgroundColor = Color(0xFFD1E3FF); //should be very light
 }
 
+//creates a top bar for screens, with a default color.
+//String topText - what should the top bar say?
 Widget createTopText(String topText)
 {
     return createTopTextWithColor(topText, ThemeColors.primaryColor);
 }
 
+//creates a top bar for screens.
+//String topText - what should the top bar say?
+//Color topColor - what color should the top bar be?
 Widget createTopTextWithColor(String topText, Color topColor)
 {
   return Expanded(
@@ -34,7 +39,9 @@ Widget createTopTextWithColor(String topText, Color topColor)
   );
 }
 
-//nextScreen is what would typically go in onPressed
+//Creates a bottom row which houses a navigation button.
+//IconData iconLabel - what should the navigation button look like?
+//Function nextScreen - what would typically go in onPressed
 Widget createBottomRow(IconData iconLabel, Function nextScreen)
 {
     return Expanded(
@@ -64,6 +71,12 @@ Widget createBottomRow(IconData iconLabel, Function nextScreen)
     );
 }
 
+//creates a slider with a preset size and look.
+//double adjustableVariable - what do you want to adjust?
+//String title - what does this slider represent?
+//String description - enter any additional information the user should know.
+//double min, max - what are the bounds of your slider (max > min)
+//Function onSliderChanged(double value) - what should happen when the slider is adjusted?
 Widget createSlider(double adjustableVariable, String title, String description, double min, double max, Function onSliderChanged(double value))
 {
   if (adjustableVariable > max) adjustableVariable = max;
@@ -107,6 +120,13 @@ Widget createSlider(double adjustableVariable, String title, String description,
 
 //depending on the palette organization, this will assign them differently
 //assume palette[0] = adjustedColor
+//creates a palette given a starting color and variance information.
+//PaletteOrganizationt type - what palette are you going for?
+//List<HSLColor> palette - the palette you will assign colors to.
+//int _paletteSize - how big the palette is
+//double _hueVarianceValue - how much do you want the hues to shift?
+//double _saturationVarianceValue - how much contrast do you want in saturation?
+//double _luminanceVarianceValue - how much contrast do you want in values?
 List<HSLColor> calculateOtherColors(PaletteOrganization type, List<HSLColor> palette, int _paletteSize, double _hueVarianceValue, double _saturationVarianceValue, double _luminanceVarianceValue)
 {
   //correct any colors that are too high (if for whatever reason they are)
@@ -176,25 +196,31 @@ List<HSLColor> calculateOtherColors(PaletteOrganization type, List<HSLColor> pal
 
       for (int i = 0; i< halfWay; i++)
       {
+        //change lightness
         palette[i] = referenceColor.withLightness(referenceColor.lightness + posLumRange * ((i+1)/halfWay));
 
+        //change hues
         double hueDelta = referenceColor.hue + hueVariance * i;
         if (hueDelta < 0) hueDelta+=360;
         if (hueDelta > 360) hueDelta-=360;
         palette[i] = palette[i].withHue(hueDelta);
 
+        //change saturation
         palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary * i).clamp(0, 1));
       }
 
       for (int i = halfWay; i< _paletteSize; i++)
       {
+        //change lightness
         palette[i] = referenceColor.withLightness((referenceColor.lightness + posLumRange * (i-2)/(_paletteSize-halfWay)).clamp(0, 1));
 
+        //change hues
         double hueDelta = (oppositeHue - hueVariance * (i-halfWay));
         if (hueDelta < 0) hueDelta+=360;
         if (hueDelta > 360) hueDelta-=360;
         palette[i] = palette[i].withHue(hueDelta);
 
+        //change saturation
         palette[i] = palette[i].withSaturation((referenceColor.saturation + saturationVarianceComplementary).clamp(0, 1));
       }
       return palette;

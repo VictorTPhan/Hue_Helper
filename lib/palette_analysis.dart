@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'basic_widgets.dart';
 import 'main.dart';
 
-enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta, black, gray, white}
-enum paletteType {monochromatic, complementary, analogous, none}
+enum colorType {red, orange, yellow, lime, green, cyan, blue, purple, magenta, black, gray, white} //what color is this?
+enum paletteType {monochromatic, complementary, analogous, none} //what kind of palette is this?
 enum paletteRigidity {strong, loose, none} //how much does the palette fit into one of the 3 types?
-enum luminanceContrast {strong, solid, weak}
+enum luminanceContrast {strong, solid, weak} //how much does the palette vary in luminance?
 enum luminanceVariance {consistent, inconsistent} //how evenly spaced are luminance values?
-enum saturationContrast {strong, solid, weak}
+enum saturationContrast {strong, solid, weak} //how much does the palette vary in saturation?
 enum saturationVariance {consistent, inconsistent} //how evenly spaced are the saturation values?
-enum lumType{normal, dark, light}
-enum satType{deSat, normal, sat}
+enum lumType{normal, dark, light} //how bright is this color?
+enum satType{deSat, normal, sat} //how saturated is this color?
 
 class PaletteInfo //we will put any information about the palette that we analyze here
 {
@@ -40,7 +40,7 @@ class PaletteInfo //we will put any information about the palette that we analyz
    }
 }
 
-class ContrastInfo
+class ContrastInfo //we will put any information about the luminances in the palette here
 {
     ContrastInfo({this.lumContrast = luminanceContrast.weak, this.lumVariance = luminanceVariance.inconsistent, this.reason = ''});
 
@@ -66,7 +66,7 @@ class ContrastInfo
     }
 }
 
-class SaturationInfo
+class SaturationInfo //we will put any information about the saturation values in the palette here
 {
   SaturationInfo({this.satContrast = luminanceContrast.weak, this.satVariance = luminanceVariance.inconsistent, this.reason = ''});
 
@@ -92,7 +92,7 @@ class SaturationInfo
   }
 }
 
-class ColorTypeInfo
+class ColorTypeInfo //we will put any information on a specific color in here
 {
   ColorTypeInfo({this.col = Colors.red, this.type = colorType.red, this.sat = satType.normal, this.lum = lumType.normal});
 
@@ -108,6 +108,8 @@ class PaletteAnalysis extends StatelessWidget {
   List<Color> palette;
   final int paletteSize; //if the user inputs a 6 palette, goes back, selects a 4, and then goes forward, it does not cut off the 2 unnecessary colors.
 
+  //returns a colorType given a hue value
+  //int val - the hue value, ranging from 0 to 360
   colorType getColorFromHue(int val)
   {
     return (val > 337 || val < 14)? colorType.red:
@@ -121,6 +123,8 @@ class PaletteAnalysis extends StatelessWidget {
     (val < 336)? colorType.magenta: colorType.magenta;
   }
 
+  //returns a String given a colorType.
+  //colorType type - the color you want the string of.
   String getStringFromColor(colorType type)
   {
     switch(type){
@@ -137,6 +141,8 @@ class PaletteAnalysis extends StatelessWidget {
     }
   }
 
+  //returns black, gray, or white depending on what color you input
+  //HSLColor c - the color you want to go in.
   //assume the color going in has no saturation
   colorType getMonotoneColor(HSLColor c)
   {
@@ -145,12 +151,18 @@ class PaletteAnalysis extends StatelessWidget {
     else return colorType.gray;
   }
 
+  //checks if the color you're checking has no saturation.
+  //double saturationOfLastColor - ranges from 0 to 1, inclusive.
   //assume the color after lastColor is indeed monotone
   bool wasLastColorMonochromatic(double saturationOfLastColor)
   {
     return (saturationOfLastColor != 0)? false: true;
   }
 
+  //checks if a new color in the color matrix should be created depending on the last analyzed color.
+  //int hueValue - the current color's hue value, ranging from 0 to 360.
+  //double saturationValue - the current color's saturation value, ranging from 0 to 1, inclusive.
+  //int lastColorValue - the last color's hue, ranging from 0 to 360.
   bool warrantsNewColor(int hueValue, double saturationValue, int lastColorValue)
   {
     if (saturationValue == 0) return false;
@@ -159,6 +171,11 @@ class PaletteAnalysis extends StatelessWidget {
     return (getColorFromHue(lastColorValue) == getColorFromHue(hueValue))? false: true;
   }
 
+  //generates a color matrix, which is a 2D array which sorts hues into colors.
+  //the matrix contains a list. this sublist represents a color. each item in the sublist is a hue value.
+  //List<int> hues - the hues that were inputted previously, from 0 to 360.
+  //List<double> saturations - the saturation values that were inputted previously, from 0 to 1, inclusive.
+  //List<double> lightness - the luminance values that were inputted previously, from 0 to 1, inclusive.
   //assume all of these are sorted according to hue and have the same length
   List<List<int>> generateHueMatrix(List<int> hues, List<double> saturations, List<double> lightness)
   {
@@ -208,6 +225,8 @@ class PaletteAnalysis extends StatelessWidget {
     return averageHueDeltas;
   }
 
+  //prints out all the color types when given a list of hues.
+  //List<int> values - the hues values, ranging from 0 to 360.
   void listAllColors(List<int> values)
   {
     for(int val in values)
@@ -216,6 +235,8 @@ class PaletteAnalysis extends StatelessWidget {
     }
   }
 
+  //generates a list of colorTypes when given a color matrix.
+  //List<List<int>> matrix -  a 2D array which sorts hues into colors. the matrix contains a list. this sublist represents a color. each item in the sublist is a hue value.
   List<colorType> huesAsColorTypes(List<List<int>> matrix)
   {
     List<colorType> list = List.filled(0, colorType.red, growable: true);
@@ -231,6 +252,8 @@ class PaletteAnalysis extends StatelessWidget {
     return list;
   }
 
+  //reduces a 2D color matrix into a 1D list by taking the averages of all values in the matrix's sublists.
+  //List<List<int>> matrix -  a 2D array which sorts hues into colors. the matrix contains a list. this sublist represents a color. each item in the sublist is a hue value.
   List<int> getAverageColors(List<List<int>> matrix)
   {
     //get the average hue of each color
@@ -263,6 +286,7 @@ class PaletteAnalysis extends StatelessWidget {
     return averageColorHues;
   }
 
+  //returns the average of all hue delta values.
   double calculateTotalHueDeltas(List<int> hueDeltas)
   {
     double totalHueDeltas = 0;
@@ -272,6 +296,7 @@ class PaletteAnalysis extends StatelessWidget {
     return totalHueDeltas;
   }
 
+  //checks hue delta values, and sees if any of them are too far away from the target value of totalHueDeltas.
   int analogousBlunderAnalysis(double totalHueDeltas, List<int> hueDeltas)
   {
     double averageHueVariance = totalHueDeltas/hueDeltas.length;
@@ -286,6 +311,7 @@ class PaletteAnalysis extends StatelessWidget {
     return blunders;
   }
 
+  //generates a List containing the distances between values in a list of luminance values.
   List<double> generateLuminanceDeltas(List<double> luminances)
   {
     //represents the distance between average hues in colors
@@ -301,6 +327,7 @@ class PaletteAnalysis extends StatelessWidget {
     return luminanceDeltas;
   }
 
+  //generates a List containing the distances between values in a list of saturation values.
   List<double> generateSaturationDeltas(List<double> saturations)
   {
     //represents the distance between average hues in colors
@@ -316,6 +343,10 @@ class PaletteAnalysis extends StatelessWidget {
     return saturationDeltas;
   }
 
+  //performs a hue analysis, by looking at a color matrix, and deciding whether or not it is complementary, analogous, monochrome, or none.
+  //List<List<int>> matrix -  a 2D array which sorts hues into colors. the matrix contains a list. this sublist represents a color. each item in the sublist is a hue value.
+  //List<int> averageHues - the average of all the sublist items in matrix.
+  //List<ine> hueDeltas - represents the distances between values from a list of hue values.
   PaletteInfo hueAnalysis(List<List<int>> matrix, List<int> averageHues, List<int> hueDeltas)
   {
     PaletteInfo generatedInfo = PaletteInfo();
@@ -388,6 +419,7 @@ class PaletteAnalysis extends StatelessWidget {
     return generatedInfo;
   }
 
+  //checks hue luminance values, and sees if any of them are too far away from the target value.
   int calculateLuminanceBlunders(List<double> luminanceDeltas, double targetDelta)
   {
     int blunders = 0;
@@ -401,6 +433,9 @@ class PaletteAnalysis extends StatelessWidget {
     return blunders;
   }
 
+  //checks the distance between the lowest luminance value and the highest luminance value, and then determines if the distance is too big and if the other values are sorted evenly.
+  //List<double> luminances - the list of luminance values.
+  //List<double> luminanceDeltas - represents the distance between luminance values in luminances.
   //assume luminances is sorted.
   ContrastInfo luminanceAnalysis(List<double> luminances, List<double> luminanceDeltas)
   {
@@ -436,7 +471,10 @@ class PaletteAnalysis extends StatelessWidget {
       return generatedInfo;
   }
 
-  //assume luminances is sorted.
+  //checks the distance between the lowest saturation value and the highest saturation value, and then determines if the distance is too big and if the other values are sorted evenly.
+  //List<double> saturations - the list of saturation values.
+  //List<double> saturationDeltas - represents the distance between saturation values in saturations.
+  //assume saturations is sorted.
   SaturationInfo saturationAnalysis(List<double> saturations, List<double> saturationDeltas)
   {
     SaturationInfo generatedInfo = SaturationInfo();
@@ -471,7 +509,9 @@ class PaletteAnalysis extends StatelessWidget {
     return generatedInfo;
   }
 
-  //uses selection sort
+  //takes in 3 equal length lists representing hue, saturation, and luminance respectively
+  //sorts the hue array using selection sort.
+  //reorganizes the other 2 lists based on the results of hue.
   //assume the lengths of all parameters are the same.
   List<int> sortAccordingtoHue(List<int> hue, List<double> saturation, List<double> luminance){
     for (int currentIndexToSwitch = 0; currentIndexToSwitch < hue.length; currentIndexToSwitch++){
@@ -503,6 +543,7 @@ class PaletteAnalysis extends StatelessWidget {
     return hue;
   }
 
+  //the color black in flutter is of 1.0 saturation despite all other monochrome colors having 0.0 saturation. this corrects it.
   //assume all lists have the same length
   void correctBlackColors(List<int> hues, List<double> saturations, List<double> luminances){
     for (int i = 0; i<hues.length; i++){
@@ -511,6 +552,8 @@ class PaletteAnalysis extends StatelessWidget {
     }
   }
 
+  //removes all monochrome colors permanently from hue.
+  //a monochrome color is a color with no saturation.
   //assume all lists have the same length
   List<int> removeMonochromeColors(List<int> hue, List<double> saturation) {
 
@@ -554,6 +597,7 @@ class PaletteAnalysis extends StatelessWidget {
     else return lumType.dark;
   }
 
+  //takes in 3 arrays of equal length representing the hues, saturations, and luminances respectively and generates a colorTypeInfo class for each color scanned.
   List<ColorTypeInfo> getColorTypeInfo(List<int> hues, List<double> saturations, List<double> luminances)
   {
     List<ColorTypeInfo> allColors = List.filled(0, ColorTypeInfo(), growable: true);

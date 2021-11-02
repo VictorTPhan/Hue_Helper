@@ -59,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  //creates a random palette and sends the user to the finished palette screen.
   void generateRandomPalette()
   {
     //generate a starting color and fill the palette with it
