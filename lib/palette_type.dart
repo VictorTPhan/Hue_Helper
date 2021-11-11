@@ -70,11 +70,13 @@ class PaletteTypeState extends State<PaletteType> {
                             decoration: BoxDecoration(
                                 color: Color(0x7C000000),
                                 borderRadius: BorderRadius.all(Radius.circular(40))),
-                            child: Row(children: [
-                              Icon(Icons.circle, size: 75, color: Color(0xFF380802),),
-                              Icon(Icons.circle, size: 75, color: Color(0xFF911507),),
-                              Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
-                              Icon(Icons.circle, size: 75, color: Color(0xFFFFA096),),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Icon(Icons.circle, size: 75, color: Color(0xFF380802),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFF911507),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFF240C),),
+                                  Icon(Icons.circle, size: 75, color: Color(0xFFFFA096),),
                             ]),
                           )
                         ])

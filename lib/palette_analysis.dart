@@ -670,6 +670,10 @@ class PaletteAnalysis extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                             color: i,
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 5.0,
+                            ),
                             borderRadius: BorderRadius.all(Radius.circular(20))),
                         margin: EdgeInsets.all(3.0),
                       ),

@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   {
     //generate a starting color and fill the palette with it
     HSLColor startingColor = HSLColor.fromColor(Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0));
-    List<HSLColor> generatedPalette = List.filled(Random().nextInt(5)+2, startingColor); //random.nextInt(5) returns 0 to 4, add 2 to generate between 2 to 6 colors.
+    List<HSLColor> generatedPalette = List.filled(Random().nextInt(4)+3, startingColor); //random.nextInt(4) returns 0 to 3, add 3 to generate between 3 to 6 colors.
 
     //this will be changed, it is assigned a default value because otherwise the compiler will raise an error
     PaletteOrganization generatedType = PaletteOrganization.analogous;
@@ -80,8 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //depending on palette type, the range for hue variation will be different
     double hueLow, hueHigh;
-    double satLow = 40, satHigh = 80;
-    double lumLow = 20, lumHigh = 90;
+    double satLow = 60, satHigh = 80;
+    double lumLow = 50, lumHigh = 90;
 
     if (generatedType == PaletteOrganization.analogous) {hueLow = 90; hueHigh = 180;}
     else {hueLow = 0; hueHigh = 90;}
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) => PaletteInput()),
                       );
                     }),
-                    createNavButton('any palette, please', ThemeColors.tertiaryColor, () {
+                    createNavButton('random palette', ThemeColors.tertiaryColor, () {
                       generateRandomPalette();
                     }),
                   ],

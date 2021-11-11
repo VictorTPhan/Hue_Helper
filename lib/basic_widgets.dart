@@ -118,6 +118,12 @@ Widget createSlider(double adjustableVariable, String title, String description,
   );
 }
 
+double getOppositeHue(double hue){
+  double opposite = hue+180;
+  if (hue>360) opposite -= 360;
+  return opposite;
+}
+
 //depending on the palette organization, this will assign them differently
 //assume palette[0] = adjustedColor
 //creates a palette given a starting color and variance information.
@@ -191,8 +197,10 @@ List<HSLColor> calculateOtherColors(PaletteOrganization type, List<HSLColor> pal
       return palette;
     case PaletteOrganization.complementary:
       double saturationVarianceComplementary = _saturationVarianceValue/2;
-      double oppositeHue = (180-referenceColor.hue).abs();
+      double oppositeHue = getOppositeHue(referenceColor.hue);
       double posLumRange = (1-referenceColor.lightness) * (_luminanceVarianceValue/1.0);
+
+      print(oppositeHue);
 
       for (int i = 0; i< halfWay; i++)
       {

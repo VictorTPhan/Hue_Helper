@@ -43,6 +43,7 @@ class _PaletteInputState extends State<PaletteInput> {
             child: Column(
               children: [
                 createTopText("input your palette"),
+                //the slider
                 Expanded(
                     flex: 15,
                     child: Column(
@@ -57,7 +58,7 @@ class _PaletteInputState extends State<PaletteInput> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 25,
                                   )),
-                              Text('how many colors do you want?',
+                              Text('how many colors do you have?',
                                   style: TextStyle(
                                     fontSize: 20,
                                   )),
@@ -82,6 +83,7 @@ class _PaletteInputState extends State<PaletteInput> {
                         ),
                       ],)
                 ),
+                //the palette icons
                 Expanded(
                   flex: 10,
                   child: Row(
@@ -93,7 +95,9 @@ class _PaletteInputState extends State<PaletteInput> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: palette[i],
-                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40),
+                                  shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(40),
+                                    side: BorderSide(color: Colors.black, width: 5.0),
                                   ),),
                                 child: Container(),
                                 onPressed: (){
@@ -108,6 +112,7 @@ class _PaletteInputState extends State<PaletteInput> {
                     ],
                   ),
                 ),
+                //the color picker
                 Expanded(
                   flex: 45,
                   child: ColorPicker(

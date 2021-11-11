@@ -147,6 +147,10 @@ class _ColorAdjustmentState extends State<ColorAdjustment> {
                           child: Container(
                               decoration: BoxDecoration(
                                   color: selectedColor.toColor(),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 5.0,
+                                  ),
                                   borderRadius: BorderRadius.all(Radius.circular(30))),
                               margin: EdgeInsets.all(15),
                               ),
